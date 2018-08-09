@@ -21,7 +21,7 @@
 #' @references
 #'
 #' @export
-MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec, pi_init = 0.6, sigma_init = 1e-5, profile = FALSE){
+MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,by=0.01), pi_init = 0.6, sigma_init = 1e-5, profile = FALSE){
     EM_res = matrix(nrow = length(theta_temp_vec), ncol = 3)
     colnames(EM_res) = c("theta", "pi0", "sigma2")
 
