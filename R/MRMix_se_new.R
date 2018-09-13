@@ -17,16 +17,33 @@
 #' @export
 MRMix_se = function(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2){
     ### Main variance formula
-    sqrt(1/(sum(p3l_p2sigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p2l_ppi0_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))+
-           sum(p2l_p2sigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p3l_ppi0_p2theta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))-
-           sum(p3l_ppi0_psigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p2l_psigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))-
-           sum(p2l_ppi0_psigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p3l_psigma2_p2theta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)))^2*
-        (sum((p3l_p2sigma2_pbetax(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)*sum(p2l_ppi0_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))+
+    info = matrix(NA,nrow=3,ncol=3)
+    info[1,1] = sum(p2l_p2pi0(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))
+    info[1,2] = info[2,1] = sum(p2l_ppi0_psigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))
+    info[1,3] = sum(p2l_ppi0_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))
+    info[2,2] = sum(p2l_p2sigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))
+    info[2,3] = sum(p2l_psigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))
+    info[3,1] = sum(p3l_ppi0_p2sigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p2l_ppi0_psigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))+
+        sum(p2l_p2sigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p3l_p2pi0_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))-
+        sum(p3l_p2pi0_psigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p2l_psigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))-
+        sum(p2l_ppi0_psigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p3l_ppi0_psigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))
+    info[3,2] = sum(p3l_p3sigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p2l_ppi0_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))+
+        sum(p2l_p2sigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p3l_ppi0_psigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))-
+        sum(p3l_ppi0_p2sigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p2l_ppi0_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))-
+        sum(p2l_ppi0_psigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p3l_p2sigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))
+    info[3,3] = sum(p3l_p2sigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p2l_ppi0_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))+
+        sum(p2l_p2sigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p3l_ppi0_p2theta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))-
+        sum(p3l_ppi0_psigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p2l_psigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))-
+        sum(p2l_ppi0_psigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*sum(p3l_psigma2_p2theta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))
+    infoinv = solve(info)
+    A1 = infoinv[3,1]; A2 = infoinv[3,2]; A3 = infoinv[3,3]
+    
+    sqrt(sum((A1*p2l_ppi0_pbetax(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)+A2*p2l_psigma2_pbetax(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2) + A3*(p3l_p2sigma2_pbetax(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)*sum(p2l_ppi0_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))+
                   sum(p2l_p2sigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*p3l_ppi0_ptheta_pbetax(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)-
                   p3l_ppi0_psigma2_pbetax(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)*sum(p2l_psigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))-
-                  sum(p2l_ppi0_psigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*p3l_psigma2_ptheta_pbetax(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))^2*sx2)+
-             sum((p3l_p2sigma2_pbetay(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)*sum(p2l_ppi0_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))+
+                  sum(p2l_ppi0_psigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*p3l_psigma2_ptheta_pbetax(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)))^2*sx2)+
+             sum((A1*p2l_ppi0_pbetay(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)+A2*p2l_psigma2_pbetay(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)+A3*(p3l_p2sigma2_pbetay(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)*sum(p2l_ppi0_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))+
                       sum(p2l_p2sigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*p3l_ppi0_ptheta_pbetay(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)-
                       p3l_ppi0_psigma2_pbetay(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)*sum(p2l_psigma2_ptheta(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))-
-                      sum(p2l_ppi0_psigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*p3l_psigma2_ptheta_pbetay(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))^2*sy2)))
+                      sum(p2l_ppi0_psigma2(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2))*p3l_psigma2_ptheta_pbetay(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)))^2*sy2))
 }

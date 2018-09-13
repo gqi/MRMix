@@ -147,7 +147,7 @@ pl_ppi0 = function(betax, betay, sx2, sy2, theta, pi0, sigma2){
     (f1(betax, betay, sx2, sy2, theta)-f2(betax, betay, theta, sigma2)) / f(betax, betay, sx2, sy2, theta, pi0, sigma2)
 }
 
-pl_psigma2 = function(sigma2){
+pl_psigma2 = function(betax, betay, sx2, sy2, theta, pi0, sigma2){
     (1-pi0)*pf2_psigma2(betax, betay, theta, sigma2) / f(betax, betay, sx2, sy2, theta, pi0, sigma2)
 }
 
@@ -180,6 +180,30 @@ p2l_psigma2_ptheta = function(betax, betay, sx2, sy2, theta, pi0, sigma2){
         f(betax, betay, sx2, sy2, theta, pi0, sigma2)^2
 }
 
+p2l_ppi0_pbetax = function(betax, betay, sx2, sy2, theta, pi0, sigma2){
+    1/f(betax, betay, sx2, sy2, theta, pi0, sigma2)^2*
+        ((pf1_pbetax(betax, betay, sx2, sy2, theta)-pf2_pbetax(betax, betay, theta, sigma2))*f(betax, betay, sx2, sy2, theta, pi0, sigma2)-
+             (f1(betax, betay, sx2, sy2, theta)-f2(betax, betay, theta, sigma2))*(pi0*pf1_pbetax(betax, betay, sx2, sy2, theta)+(1-pi0)*pf2_pbetax(betax, betay, theta, sigma2)))
+}
+
+p2l_ppi0_pbetay = function(betax, betay, sx2, sy2, theta, pi0, sigma2){
+    1/f(betax, betay, sx2, sy2, theta, pi0, sigma2)^2*
+        ((pf1_pbetay(betax, betay, sx2, sy2, theta)-pf2_pbetay(betax, betay, theta, sigma2))*f(betax, betay, sx2, sy2, theta, pi0, sigma2)-
+             (f1(betax, betay, sx2, sy2, theta)-f2(betax, betay, theta, sigma2))*(pi0*pf1_pbetay(betax, betay, sx2, sy2, theta)+(1-pi0)*pf2_pbetay(betax, betay, theta, sigma2)))
+}
+
+p2l_psigma2_pbetax = function(betax, betay, sx2, sy2, theta, pi0, sigma2){
+    (1-pi0)/f(betax, betay, sx2, sy2, theta, pi0, sigma2)^2*
+        (p2f2_psigma2_pbetax(betax, betay, theta, sigma2)*f(betax, betay, sx2, sy2, theta, pi0, sigma2)-
+             pf2_psigma2(betax, betay, theta, sigma2)*(pi0*pf1_pbetax(betax, betay, sx2, sy2, theta)+(1-pi0)*pf2_pbetax(betax, betay, theta, sigma2)))
+}
+
+p2l_psigma2_pbetay = function(betax, betay, sx2, sy2, theta, pi0, sigma2){
+    (1-pi0)/f(betax, betay, sx2, sy2, theta, pi0, sigma2)^2*
+        (p2f2_psigma2_pbetay(betax, betay, theta, sigma2)*f(betax, betay, sx2, sy2, theta, pi0, sigma2)-
+             pf2_psigma2(betax, betay, theta, sigma2)*(pi0*pf1_pbetay(betax, betay, sx2, sy2, theta)+(1-pi0)*pf2_pbetay(betax, betay, theta, sigma2)))
+}
+
 ## Third derivatives of the likelihood
 p3l_ppi0_p2sigma2 = function(betax, betay, sx2, sy2, theta, pi0, sigma2){
     -p2l_p2sigma2(betax, betay, sx2, sy2, theta, pi0, sigma2)/(1-pi0) +
@@ -198,7 +222,7 @@ p3l_p2pi0_psigma2 = function(betax, betay, sx2, sy2, theta, pi0, sigma2){
         f(betax, betay, sx2, sy2, theta, pi0, sigma2)
 }
 
-p3l_p3sigma2 = function(sigma2){
+p3l_p3sigma2 = function(betax, betay, sx2, sy2, theta, pi0, sigma2){
     (1-pi0)/f(betax, betay, sx2, sy2, theta, pi0, sigma2)^2*
         (p3f2_p3sigma2(betax, betay, theta, sigma2)*f(betax, betay, sx2, sy2, theta, pi0, sigma2)-
              (1-pi0)*pf2_psigma2(betax, betay, theta, sigma2)*p2f2_p2sigma2(betax, betay, theta, sigma2)-
