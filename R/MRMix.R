@@ -47,9 +47,14 @@ MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,
             pi0 = mean(pt)
             sigma0 = sum((1-pt)*(betahat_y-theta_temp*betahat_x)^2)/(length(betahat_x)-sum(pt))
 
-            if (pi0<1e-10) pi0 = 1e-10
-            if (pi0>0.9999999) pi0 = 0.9999999
+            # if (pi0<1e-10) pi0 = 1e-10
+            # if (pi0>0.9999999) pi0 = 0.9999999
+            # if (sigma0>0.01) sigma0=0.01
+            
+            if (pi0<0.0001) pi0 = 0.0001
+            if (pi0>0.9999) pi0 = 0.9999
             if (sigma0>0.01) sigma0=0.01
+            if (sigma0<1e-7) sigma0=1e-7
 
             if (iter%%1000==0){
                 # print(paste("theta_temp", theta_temp, "pi0", pi0, "loglkl", loglkl))
