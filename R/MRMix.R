@@ -11,7 +11,7 @@
 #' @param sigma_init Initial value of the variance of the non-null component. See details.
 #' @param profile Logical. Default to be \code{FALSE} and only a list of 3 containing the estimate of causal effect (\code{theta}) and corresponding \code{pi0} and \code{sigma2}. If TRUE, returns a matrix of 3 columns. The first column is \code{theta_temp_vec}. The second and third column are the corresponding \code{pi0} and \code{sigma2} values.
 
-#' @details The algorithm searches over a grid of possible values of the causal effect $\theta$. For each fixed $\theta$, fit mixture model \code{pi0N(0,sy2+theta^2 sx2)+(1-\pi0)N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. Choose the value of \code{theta} that have the maximum \code{pi0} as the estimate of causal effect.
+#' @details The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, fit mixture model \code{pi0*N(0,sy2+theta^2 sx2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. Choose the value of \code{theta} that have the maximum \code{pi0} as the estimate of causal effect.
 #'
 #' @return A list that contains
 #' \item{theta}{Estimate of causal effect.}
