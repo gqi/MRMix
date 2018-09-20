@@ -1,11 +1,10 @@
 Package: MRMix
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Mendelian Randomization Analysis Using Mixture Models (MRMix)
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Guanghao Qi and Nilanjan Chatterjee
+Maintainer: Guanghao Qi <gqi1@jhu.edu>
+Description: This package gives robust estimation of causal effects by conducting Mendelian randomization analysis using a mixture model approach.
+License: GPL-2
 Encoding: UTF-8
 LazyData: true

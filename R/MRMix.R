@@ -17,10 +17,13 @@
 #' \item{theta}{Estimate of causal effect.}
 #' \item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}.}
 #' \item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
-#'
 #' @references
-#'
+#' Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analysis Using Mixture Models (MRMix) for Genetic Effect-Size-Distribution Leads to Robust Estimation of Causal Effects." bioRxiv (2018): 367821.
 #' @export
+#' @examples
+#' data("sumstats", package = "MRMix")
+#' est = MRMix(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2)
+#' se = MRMix_se(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2, est$theta, est$pi0, est$sigma2)
 MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,by=0.01), pi_init = 0.6, sigma_init = 1e-5, profile = FALSE){
     EM_res = matrix(nrow = length(theta_temp_vec), ncol = 3)
     colnames(EM_res) = c("theta", "pi0", "sigma2")
@@ -50,7 +53,7 @@ MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,
             # if (pi0<1e-10) pi0 = 1e-10
             # if (pi0>0.9999999) pi0 = 0.9999999
             # if (sigma0>0.01) sigma0=0.01
-            
+
             if (pi0<0.0001) pi0 = 0.0001
             if (pi0>0.9999) pi0 = 0.9999
             if (sigma0>0.01) sigma0=0.01
