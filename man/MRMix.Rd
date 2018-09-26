@@ -2,7 +2,7 @@
 % Please edit documentation in R/MRMix.R
 \name{MRMix}
 \alias{MRMix}
-\title{Mendelian randomization analysis using mixture models}
+\title{Two-sample Mendelian randomization analysis using mixture models}
 \usage{
 MRMix(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49, 0.5, by
   = 0.01), pi_init = 0.6, sigma_init = 1e-05, profile = FALSE)
@@ -16,13 +16,13 @@ MRMix(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49, 0.5, by
 
 \item{sy2}{Variance of \code{betahat_y}. Vector of length \code{K}.}
 
-\item{theta_temp_vec}{A vector of the grid search values of the causal effect \code{theta}.}
+\item{theta_temp_vec}{A vector of the grid search values for the causal effect \code{theta}.}
 
 \item{pi_init}{Initial value of the probability mass at the null component. See details.}
 
 \item{sigma_init}{Initial value of the variance of the non-null component. See details.}
 
-\item{profile}{Logical. Default to be \code{FALSE} and only a list of 3 containing the estimate of causal effect (\code{theta}) and corresponding \code{pi0} and \code{sigma2}. If TRUE, returns a matrix of 3 columns. The first column is \code{theta_temp_vec}. The second and third column are the corresponding \code{pi0} and \code{sigma2} values.}
+\item{profile}{Logical. Default to be \code{FALSE} and only return a list of 3 containing the estimate of causal effect (\code{theta}) and corresponding \code{pi0} and \code{sigma2}. If TRUE, returns a matrix of 3 columns. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values.}
 }
 \value{
 A list that contains
@@ -31,7 +31,7 @@ A list that contains
 \item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
 }
 \description{
-Conducts Mendelian randomization analysis by fitting a mixture normal model for the bivariate effect size distribution of the exposure and the outcome.
+Conducts Mendelian randomization analysis by fitting a mixture normal model for the bivariate effect size distribution of the exposure and the outcome. Uses GWAS summary level data to identify causal effects.
 }
 \details{
 The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, fit mixture model \code{pi0*N(0,sy2+theta^2 sx2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. Choose the value of \code{theta} that have the maximum \code{pi0} as the estimate of causal effect.
