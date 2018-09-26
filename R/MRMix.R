@@ -39,12 +39,11 @@ MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,
         pi0_ck = pi0
         sigma0_ck = sigma0
         iter_ck = 0
+        # Fit mixture models via EM algorithm
         for (iter in 1:50000){
             f1 = 1/sqrt(2*pi*sigma0)*exp(-0.5/sigma0*(betahat_y-theta_temp*betahat_x)^2)
             f1[f1<1e-300] = 1e-300
             loglkl = sum(log(pi0*f0+(1-pi0)*f1))
-            # if (iter%%1000==0) print(c(iter,pi0,sigma0,loglkl))
-            # print(c(iter, pi0,sigma0,loglkl))
             pt = pi0*f0/(pi0*f0+(1-pi0)*f1)
             pt[pt>0.9999999] = 0.9999999
             pi0 = mean(pt)
@@ -56,7 +55,6 @@ MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,
             if (sigma0<1e-7) sigma0=1e-7
 
             if (iter%%1000==0){
-                # print(paste("theta_temp", theta_temp, "pi0", pi0, "loglkl", loglkl))
                 if ((abs(pi0-pi0_ck)/pi0<1e-4) & (abs(sigma0-sigma0_ck)/sigma0<1e-4)){
                     break
                 } else{
@@ -67,7 +65,6 @@ MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,
             }
         }
         EM_res[i,] = c(theta_temp, pi0, sigma0)
-        # print(paste("theta_temp", theta_temp, "pi0", pi0, "loglkl", loglkl))
     }
 
     if (profile==TRUE){
