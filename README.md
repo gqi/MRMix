@@ -1,6 +1,6 @@
 # MRMix
 
-Two-sample Mendelian randomization analysis using mixture models
+Two-sample Mendelian randomization analysis using mixture models.
 
 ### Installation
 ```
