@@ -33,7 +33,7 @@ print(se)
 ## Standard error
 # [1] 0.02084057
 ```
-Type `?MRMix` and `?MRMix_se` in `R` for more details. Installation and demo should run within seconds.
+Type `?MRMix` and `?MRMix_se` in `R` for more details. The software has been tested on MAC OS 10.11.5 with R version 3.5.1. Installation and demo should run within seconds.
 
 
 ### More information 
