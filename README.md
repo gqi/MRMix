@@ -16,7 +16,7 @@ se = MRMix_se(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2
 print(est)
 print(se)
 ```
-Type `?MRMix` and `?MRMix_se` in `R` for more details. Installation and demo should complete within seconds.
+Type `?MRMix` and `?MRMix_se` in `R` for more details. Installation and demo should run within seconds.
 
 
 ### More information 
