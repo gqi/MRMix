@@ -15,6 +15,19 @@ est = MRMix(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2)
 se = MRMix_se(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2, est$theta, est$pi0, est$sigma2) # Standard error
 print(est)
 print(se)
+
+## Expected output
+# $theta
+# [1] 0.22
+
+# $pi0
+# [1] 0.509395
+
+# $sigma2
+# [1] 9.04497e-05
+
+## Standard error
+# [1] 0.02084057
 ```
 Type `?MRMix` and `?MRMix_se` in `R` for more details. Installation and demo should run within seconds.
 
