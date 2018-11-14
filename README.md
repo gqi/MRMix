@@ -12,9 +12,11 @@ install_github("gqi/MRMix")
 ```
 data("sumstats", package = "MRMix")
 est = MRMix(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2)
-se = MRMix_se(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2, est$theta, est$pi0, est$sigma2)
+se = MRMix_se(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2, est$theta, est$pi0, est$sigma2) # Standard error
+print(est)
+print(se)
 ```
-Type `?MRMix` in `R` for more details.
+Type `?MRMix` in `R` for more details. Installation and demo should complete within seconds.
 
 
 ### More information 
