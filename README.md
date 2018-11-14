@@ -1,6 +1,10 @@
 # MRMix
 
-Two-sample Mendelian randomization analysis using mixture models.
+R package for two-sample Mendelian randomization analysis using mixture models.
+
+### System requirements
+
+MRMix can be used on any operating system. R needs to be installed.
 
 ### Installation
 ```
