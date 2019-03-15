@@ -51,7 +51,7 @@ MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,
 
             if (pi0<0.0001) pi0 = 0.0001
             if (pi0>0.9999) pi0 = 0.9999
-            if (sigma0>0.01) sigma0=0.01
+            # if (sigma0>0.01) sigma0=0.01
             if (sigma0<1e-7) sigma0=1e-7
 
             if (iter%%1000==0){
