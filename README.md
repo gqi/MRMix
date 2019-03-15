@@ -4,7 +4,7 @@ R package for two-sample Mendelian randomization analysis using mixture models.
 
 ### System requirements
 
-MRMix can be used on any operating system. R needs to be installed.
+MRMix can be used on any operating system. R needs to be installed. Package `devtools` is required for the installation.
 
 ### Installation
 ```
@@ -14,6 +14,7 @@ install_github("gqi/MRMix")
 
 ### Example
 ```
+library(MRMix)
 data("sumstats", package = "MRMix")
 est = MRMix(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2)
 se = MRMix_se(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2, est$theta, est$pi0, est$sigma2) # Standard error
