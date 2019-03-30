@@ -1,0 +1,145 @@
+rm(list = ls())
+library(data.table)
+library(dplyr)
+library(MASS)
+library(MendelianRandomization)
+library(MRMix)
+
+source("/dcl01/chatterj/data/gqi/multitrait_effsize/code/MR_mix.R")
+
+Nvec = c(5e4, 1e5, 2e5, 5e5, 1e6) # 1:5
+pi1vec = c(0.005, 0.01)
+pthrvec = c(0.005, 5e-4, 5e-6, 5e-8) # 1:4
+thetavec = c(-0.2, 0, 0.2)
+NxNy_ratio_vec = 1:5
+pct_large_vec = c(0.02,0.05)
+
+temp = as.integer(commandArgs(trailingOnly = TRUE)) # 6 elements
+N = Nvec[temp[1]]
+pi1 = pi1vec[temp[2]]
+pthr = pthrvec[temp[3]]
+theta = thetavec[temp[4]]
+NxNy_ratio = NxNy_ratio_vec[temp[5]]
+pct_large = pct_large_vec[temp[6]]
+
+M = 2e5
+# pi1 = 0.005
+pi2 = 0.02-pi1 # 0.015
+pi3 = 0.01
+pi4 = 1-pi1-pi2-pi3
+sigma2y = 5e-5 # h2=28.8%
+sigma2x = 5e-5 # h2=20%
+rho = 0.5
+
+print(paste("N", N, "pthr", pthr, "pi1", pi1, "theta", theta, "NxNy_ratio", NxNy_ratio))
+
+nx = N; ny = N/NxNy_ratio
+nx.rev = ny; ny.rev = nx
+
+est = matrix(NA, nrow = 100, ncol = 12)
+colnames(est) = c("MRmix", "IVW", "w_median", "w_mode", "Egger", "numIV",
+                  "MRmix_rev", "IVW_rev", "w_median_rev", "w_mode_rev", "Egger_rev", "numIV_rev")
+
+# set.seed(543676*temp[4])
+for (repind in 1:100){
+    set.seed(1245*repind)
+    print(paste("rep",repind))
+
+    ind1 = sample(M, round(M*pi1))
+    # SNPs of large effects for X account for 2%, with effect size 10 times
+    ind1lx = sample(ind1, round(M*0.75*(pi1+pi2)*pct_large)) # Large effects for X in category 1
+    ind1sx = setdiff(ind1,ind1lx) # Small effects for X in category 1
+
+    ind2 = sample(setdiff(1:M,ind1), round(M*pi2))
+    ind2lx = sample(ind2,round(M*0.25*(pi1+pi2)*pct_large))
+    ind2ly = sample(ind2,round(M*0.25*(pi1+pi2)*pct_large))
+    ind2l_xy = intersect(ind2lx,ind2ly)
+    ind2l_xnoy = setdiff(ind2lx,ind2ly)
+    ind2l_ynox = setdiff(ind2ly,ind2lx)
+    ind2s = setdiff(ind2,union(ind2lx,ind2ly))
+
+    ind3 = sample(setdiff(1:M,c(ind1,ind2)), round(M*pi3))
+    ind3ly = sample(ind3,round(M*0.75*(pi1+pi2)*pct_large))
+    ind3sy = setdiff(ind3,ind3ly)
+
+    beta = matrix(rep(0,2*M), ncol = 2)
+
+    beta[ind1sx,1] = rnorm(length(ind1sx), mean = 0, sd = sqrt(sigma2x))
+    beta[ind1lx,1] = rnorm(length(ind1lx), mean = 0, sd = sqrt(10*sigma2x))
+    beta[ind1,2] = theta*beta[ind1,1]
+
+    beta[ind2s,] = mvrnorm(length(ind2s), mu = c(0,0), Sigma = matrix(c(sigma2x,rho*sqrt(sigma2x*sigma2y),rho*sqrt(sigma2x*sigma2y),sigma2y),nrow=2))
+    if (length(ind2l_xnoy)>0){
+    beta[ind2l_xnoy,] = mvrnorm(length(ind2l_xnoy), mu = c(0,0), Sigma = matrix(c(10*sigma2x,rho*sqrt(10*sigma2x*sigma2y),rho*sqrt(10*sigma2x*sigma2y),sigma2y),nrow=2))
+    }
+    if (length(ind2l_ynox)>0){
+        beta[ind2l_ynox,] = mvrnorm(length(ind2l_ynox), mu = c(0,0), Sigma = matrix(c(sigma2x,rho*sqrt(sigma2x*10*sigma2y),rho*sqrt(sigma2x*10*sigma2y),10*sigma2y),nrow=2))
+    }
+    if (length(ind2l_xy)>0){
+        beta[ind2l_xy,] = mvrnorm(length(ind2l_xy), mu = c(0,0), Sigma = 10*matrix(c(sigma2x,rho*sqrt(sigma2x*sigma2y),rho*sqrt(sigma2x*sigma2y),sigma2y),nrow=2))
+    }
+    beta[ind2,2] = beta[ind2,2] + theta*beta[ind2,1]
+
+    beta[ind3sy,2] = rnorm(length(ind3sy), mean = 0, sd = sqrt(sigma2y))
+    beta[ind3ly,2] = rnorm(length(ind3ly), mean = 0, sd = sqrt(10*sigma2y))
+
+    betahat.x = beta[,1] + rnorm(M, mean = 0, sd = sqrt(1/nx))
+    betahat.y = beta[,2] + rnorm(M, mean = 0, sd = sqrt(1/ny))
+    betahat.x.rev = betahat.y
+    betahat.y.rev = betahat.x
+
+    ind_filter = which(2*(1-pnorm(sqrt(nx)*abs(betahat.x)))<pthr)
+    betahat.x = betahat.x[ind_filter]
+    betahat.y = betahat.y[ind_filter]
+
+    print(paste("numIV",length(ind_filter)))
+
+    est[repind,6] = length(ind_filter)
+
+    if (est[repind,6]>2) {
+        mr.obj = mr_input(bx = betahat.x, bxse = rep(1/sqrt(nx), length(betahat.x)),
+                          by = betahat.y, byse = rep(1/sqrt(ny), length(betahat.y)))
+        IVW = mr_ivw(mr.obj)
+        med = mr_median(mr.obj)
+        mod = mr_mbe(mr.obj, iterations = 100)
+        egger = mr_egger(mr.obj)
+
+        est[repind,2] = IVW$Estimate
+        est[repind,3] = med$Estimate
+        est[repind,4] = mod$Estimate
+        est[repind,5] = egger$Estimate
+
+        theta_temp_vec = seq(-0.49,0.5,by=0.01)
+        theta_est = MRMix(betahat.x, betahat.y, 1/nx, 1/ny, theta_temp_vec, pi_init = 0.6, sigma_init = 1e-5)
+    }
+    est[repind,1] = theta_est$theta
+
+    # Reverse direction analysis
+    ind_filter = which(2*(1-pnorm(sqrt(nx.rev)*abs(betahat.x.rev)))<pthr)
+    betahat.x.rev = betahat.x.rev[ind_filter]
+    betahat.y.rev = betahat.y.rev[ind_filter]
+
+    print(paste("Reverse numIV",length(ind_filter)))
+
+    est[repind,12] = length(ind_filter)
+
+    if (est[repind,12]>2) {
+        mr.obj = mr_input(bx = betahat.x.rev, bxse = rep(1/sqrt(nx.rev), length(betahat.x.rev)),
+                          by = betahat.y.rev, byse = rep(1/sqrt(ny.rev), length(betahat.y.rev)))
+        IVW = mr_ivw(mr.obj)
+        med = mr_median(mr.obj)
+        mod = mr_mbe(mr.obj, iterations = 100)
+        egger = mr_egger(mr.obj)
+
+        est[repind,8] = IVW$Estimate
+        est[repind,9] = med$Estimate
+        est[repind,10] = mod$Estimate
+        est[repind,11] = egger$Estimate
+
+        theta_temp_vec = seq(-0.49,0.5,by=0.01)
+        theta_est = MRMix(betahat.x.rev, betahat.y.rev, 1/nx.rev, 1/ny.rev, theta_temp_vec, pi_init = 0.6, sigma_init = 1e-5)
+        est[repind,7] = theta_est$theta
+    }
+
+    save(est, file = paste0("MRmix_est_N",N,"_pi1_",pi1,"_pthr",pthr,"_theta",theta,"_NxNy",NxNy_ratio,"_pct_large",pct_large,".rda"))
+}

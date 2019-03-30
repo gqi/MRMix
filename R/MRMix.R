@@ -17,6 +17,9 @@
 #' \item{theta}{Estimate of causal effect.}
 #' \item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}.}
 #' \item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
+#' \item{se}{Standard error of causal effect estimate.}
+#' \item{zstat}{Z-statistic for the causal effect estimate.}
+#' \item{pvalue}{P-value from the z test for the causal effect.}
 #' @references
 #' Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analysis Using Mixture Models (MRMix) for Genetic Effect-Size-Distribution Leads to Robust Estimation of Causal Effects." bioRxiv (2018): 367821.
 #' @export
@@ -74,6 +77,9 @@ MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,
         est = list(theta = mean(EM_res[ind,1]),
                    pi0 = max(EM_res[,2]),
                    sigma2 = mean(EM_res[ind,3]))
+        est$se = MRMix_se(betahat_x, betahat_y, sx2, sy2, est$theta, est$pi0, est$sigma2) # Standard error
+        est$zstat = est$theta/est$se
+        est$pvalue = 2*pnorm(-abs(est$zstat))
         return(est)
     }
 }
