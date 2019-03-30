@@ -13,20 +13,20 @@
 
 #' @details The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, fit mixture model \code{pi0*N(0,sy2+theta^2 sx2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. Choose the value of \code{theta} that have the maximum \code{pi0} as the estimate of causal effect.
 #'
-#' @return A list that contains
+#' @return A one-row data frame that contains
 #' \item{theta}{Estimate of causal effect.}
 #' \item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}.}
 #' \item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
-#' \item{se}{Standard error of causal effect estimate.}
-#' \item{zstat}{Z-statistic for the causal effect estimate.}
-#' \item{pvalue}{P-value from the z test for the causal effect.}
+#' \item{SE_theta}{Standard error of causal effect estimate.}
+#' \item{zstat_theta}{Z-statistic for test of the causal effect estimate.}
+#' \item{pvalue_theta}{P-value from the z test for the causal effect.}
 #' @references
 #' Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analysis Using Mixture Models (MRMix) for Genetic Effect-Size-Distribution Leads to Robust Estimation of Causal Effects." bioRxiv (2018): 367821.
 #' @export
 #' @examples
 #' data("sumstats", package = "MRMix")
 #' est = MRMix(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2)
-#' se = MRMix_se(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2, est$theta, est$pi0, est$sigma2)
+#' est
 MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,by=0.01), pi_init = 0.6, sigma_init = 1e-5, profile = FALSE){
     EM_res = matrix(nrow = length(theta_temp_vec), ncol = 3)
     colnames(EM_res) = c("theta", "pi0", "sigma2")
@@ -77,9 +77,9 @@ MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,
         est = list(theta = mean(EM_res[ind,1]),
                    pi0 = max(EM_res[,2]),
                    sigma2 = mean(EM_res[ind,3]))
-        est$se = MRMix_se(betahat_x, betahat_y, sx2, sy2, est$theta, est$pi0, est$sigma2) # Standard error
-        est$zstat = est$theta/est$se
-        est$pvalue = 2*pnorm(-abs(est$zstat))
-        return(est)
+        est$SE_theta = MRMix_se(betahat_x, betahat_y, sx2, sy2, est$theta, est$pi0, est$sigma2) # Standard error
+        est$zstat_theta = est$theta/est$SE_theta
+        est$pvalue_theta = 2*pnorm(-abs(est$zstat_theta))
+        return(data.frame(est))
     }
 }

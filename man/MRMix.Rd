@@ -25,10 +25,13 @@ MRMix(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49, 0.5, by
 \item{profile}{Logical. Default to be \code{FALSE} and only return a list of 3 containing the estimate of causal effect (\code{theta}) and corresponding \code{pi0} and \code{sigma2}. If TRUE, returns a matrix of 3 columns. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values.}
 }
 \value{
-A list that contains
+A one-row data frame that contains
 \item{theta}{Estimate of causal effect.}
 \item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}.}
 \item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
+\item{SE_theta}{Standard error of causal effect estimate.}
+\item{zstat_theta}{Z-statistic for test of the causal effect estimate.}
+\item{pvalue_theta}{P-value from the z test for the causal effect.}
 }
 \description{
 Conducts Mendelian randomization analysis by fitting a mixture normal model for the bivariate effect size distribution of the exposure and the outcome. Uses GWAS summary level data to identify causal effects.
@@ -39,7 +42,7 @@ The algorithm searches over a grid of possible values of the causal effect \code
 \examples{
 data("sumstats", package = "MRMix")
 est = MRMix(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2)
-se = MRMix_se(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2, est$theta, est$pi0, est$sigma2)
+est
 }
 \references{
 Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analysis Using Mixture Models (MRMix) for Genetic Effect-Size-Distribution Leads to Robust Estimation of Causal Effects." bioRxiv (2018): 367821.
