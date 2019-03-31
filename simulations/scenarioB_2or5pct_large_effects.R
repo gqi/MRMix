@@ -2,9 +2,10 @@
 #' Effect size beta's are generated using the 4-component model with a small number of SNPs having distinctly larger effects than others.
 #' For a description, see Qi and Chatterjee, Nature Communcations 2018 - Methods - Simulation setup - Scenario B.
 #'
-#' Usage:
+#' Usage: run the following line on Terminal command line
 #' Rscript scenarioB_2or5pct_large_effects.R arg1 arg2 arg3 arg4 arg5 arg6
-#' arg1-5 are command line arguments to be passed to the script.
+#'
+#' arg1-6 are command line arguments to be passed to the script.
 #' arg1 indexes Nvec and can take values 1, 2, 3, 4, 5. N=Nvec[arg1]. For example, arg1=2 means N=1e5 and arg1=3 means N=2e5.
 #' arg2 indexes pi1vec and can take values 1, 2. pi1=pi1vec[arg2]. arg2=1 means pi1=0.005 and arg2=2 means pi1=0.01.
 #' arg3 indexes pthrvec and can take values 1, 2, 3, 4. pthr=pthrvec[arg3]. For example, arg3=1 means pthr=0.005 and arg3=4 means pthr=5e-8.
