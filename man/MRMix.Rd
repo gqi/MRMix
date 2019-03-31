@@ -18,11 +18,11 @@ MRMix(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-0.49, 0.5, by =
 
 \item{theta_temp_vec}{A vector of the grid search values for the causal effect \code{theta}.}
 
-\item{pi_init}{Initial value of the probability mass at the null component. See details.}
+\item{pi_init}{Initial value of the probability mass at the null component. See Details.}
 
-\item{sigma_init}{Initial value of the variance of the non-null component. See details.}
+\item{sigma_init}{Initial value of the variance of the non-null component. See Details.}
 
-\item{profile}{Logical. Default to be \code{FALSE} and only return a list of 3 containing the estimate of causal effect (\code{theta}) and corresponding \code{pi0} and \code{sigma2}. If TRUE, returns a matrix of 3 columns. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values.}
+\item{profile}{Logical. Default to be \code{FALSE} and return a list of 6 containing the estimate of causal effect (\code{theta}), corresponding \code{pi0} and \code{sigma2}, standard error, z statistic and p-value. If TRUE, returns a matrix of 3 columns. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values.}
 }
 \value{
 A list that contains
@@ -34,10 +34,10 @@ A list that contains
 \item{pvalue_theta}{P-value from the z test for the causal effect.}
 }
 \description{
-Conducts Mendelian randomization analysis by fitting a mixture normal model for the bivariate effect size distribution of the exposure and the outcome. Uses GWAS summary level data to identify causal effects. For numerical stability, we recommend using the function in the standardized scale, i.e. both the genotypes and phenotypes are standardized to have mean 0 and variance 1.
+This function conducts Mendelian randomization analysis by fitting a mixture normal model to the bivariate effect size distribution of the exposure and the outcome. MRMix uses GWAS summary level data to identify causal effects. For numerical stability, we recommend using the function in the standardized scale, i.e. both the genotypes and phenotypes are standardized to have mean 0 and variance 1. See Examples for how to standardize summary statistics.
 }
 \details{
-The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, fit mixture model \code{pi0*N(0,sy2+theta^2 sx2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. Choose the value of \code{theta} that have the maximum \code{pi0} as the estimate of causal effect. Under the standardized scale (genotypes and phenotypes have mean 0 and variance 1), the estimated causal effect \code{theta} is the SD unit increase in \code{Y} per SD unit increase in \code{X}. Summary can be standardized by \code{beta_standardized=beta/se/sqrt(N); se_standardized=1/sqrt(N)}.
+The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy2+theta^2 sx2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that have the maximum \code{pi0} as the estimate of causal effect. Under the standardized scale (genotypes and phenotypes have mean 0 and variance 1), the estimated causal effect \code{theta} is the SD unit increase in \code{Y} per SD unit increase in \code{X}. Summary statistics can be standardized by \code{beta_standardized=beta/se/sqrt(N); se_standardized=1/sqrt(N)}. See Examples for how to standardize summary statistics.
 }
 \examples{
 data("sumstats", package = "MRMix")
@@ -48,7 +48,7 @@ sx = 1/sqrt(sumstats$nx)
 sy = 1/sqrt(sumstats$ny)
 # MRMix analysis
 est = MRMix(betahat_x, betahat_y, sx, sy)
-data.frame(est)
+data.frame(est) # True causal effect is 0.2.
 }
 \references{
 Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analysis Using Mixture Models (MRMix) for Genetic Effect-Size-Distribution Leads to Robust Estimation of Causal Effects." bioRxiv (2018): 367821.

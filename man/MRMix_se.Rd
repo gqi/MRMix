@@ -15,22 +15,17 @@ MRMix_se(betahat_x, betahat_y, sx, sy, theta, pi0, sigma2)
 
 \item{sy}{Standard error of \code{betahat_y}. Vector of length \code{K}.}
 
-\item{theta}{Estimate of causal effect. First output of MRMix}
+\item{theta}{Estimate of causal effect.}
 
-\item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}. Second output of MRMix}
+\item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}.}
 
-\item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}. Third output of MRMix.}
+\item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
 }
 \value{
 The standard error of MRMix estimator.
 }
 \description{
-Calculate the standard error of the MRMix estimator using asymptotic theory.
-}
-\examples{
-data("sumstats", package = "MRMix")
-est = MRMix(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2)
-se = MRMix_se(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2, est$theta, est$pi0, est$sigma2)
+This function calculates the standard error of the MRMix estimator using asymptotic theory.
 }
 \references{
 Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analysis Using Mixture Models (MRMix) for Genetic Effect-Size-Distribution Leads to Robust Estimation of Causal Effects." bioRxiv (2018): 367821.
