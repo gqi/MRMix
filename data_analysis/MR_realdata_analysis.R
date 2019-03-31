@@ -70,14 +70,19 @@ theta_temp_vec = seq(-0.99,1,by=0.01) # 200 values in total
 
 res = MRMix(betahat_x, betahat_y, 1/sqrt(nx), 1/sqrt(ny), theta_temp_vec, pi_init = 0.6, sigma_init = 1e-5)
 
-theta_est = res$theta
-pi0_est = res$pi0
-sigma2_est = res$sigma2
-theta_se = MRMix_se(betahat_x, betahat_y, sx=1/sqrt(nx), sy=1/sqrt(ny), theta_est, pi0_est, sigma2_est)
+# theta_est = res$theta
+# pi0_est = res$pi0
+# sigma2_est = res$sigma2
+# theta_se = MRMix_se(betahat_x, betahat_y, sx=1/sqrt(nx), sy=1/sqrt(ny), theta_est, pi0_est, sigma2_est)
 
-MRres$MRmix_est = theta_est
-MRres$MRmix_se_analyt = theta_se
-MRres$pi0_est = pi0_est
-MRres$sigma2_est = sigma2_est
+MRres$MRmix_est = res$theta
+MRres$MRmix_se_analyt = res$SE_theta
+MRres$pi0_est = res$pi0
+MRres$sigma2_est = res$sigma2
+
+# MRres$MRmix_est = theta_est
+# MRres$MRmix_se_analyt = theta_se
+# MRres$pi0_est = pi0_est
+# MRres$sigma2_est = sigma2_est
 MRres$numIV = numIV
 save(MRres, file = paste0("MRres_",trait_x,"_",trait_y,"_pthr",pthr,".rda"))
