@@ -4,17 +4,17 @@
 \alias{MRMix}
 \title{Two-sample Mendelian randomization analysis using mixture models}
 \usage{
-MRMix(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49, 0.5, by
-  = 0.01), pi_init = 0.6, sigma_init = 1e-05, profile = FALSE)
+MRMix(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-0.49, 0.5, by =
+  0.01), pi_init = 0.6, sigma_init = 1e-05, profile = FALSE)
 }
 \arguments{
 \item{betahat_x}{GWAS effect estimates of the exposure. Vector of length \code{K}, where \code{K} is the number of instruments.}
 
 \item{betahat_y}{GWAS effect estimates of the outcome. Vector of length \code{K}.}
 
-\item{sx2}{Variance of \code{betahat_x}. Vector of length \code{K}.}
+\item{sx}{Standard error of \code{betahat_x}. Vector of length \code{K}.}
 
-\item{sy2}{Variance of \code{betahat_y}. Vector of length \code{K}.}
+\item{sy}{Standard error of \code{betahat_y}. Vector of length \code{K}.}
 
 \item{theta_temp_vec}{A vector of the grid search values for the causal effect \code{theta}.}
 
@@ -25,7 +25,7 @@ MRMix(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49, 0.5, by
 \item{profile}{Logical. Default to be \code{FALSE} and only return a list of 3 containing the estimate of causal effect (\code{theta}) and corresponding \code{pi0} and \code{sigma2}. If TRUE, returns a matrix of 3 columns. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values.}
 }
 \value{
-A one-row data frame that contains
+A list that contains
 \item{theta}{Estimate of causal effect.}
 \item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}.}
 \item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
@@ -34,15 +34,21 @@ A one-row data frame that contains
 \item{pvalue_theta}{P-value from the z test for the causal effect.}
 }
 \description{
-Conducts Mendelian randomization analysis by fitting a mixture normal model for the bivariate effect size distribution of the exposure and the outcome. Uses GWAS summary level data to identify causal effects.
+Conducts Mendelian randomization analysis by fitting a mixture normal model for the bivariate effect size distribution of the exposure and the outcome. Uses GWAS summary level data to identify causal effects. For numerical stability, we recommend using the function in the standardized scale, i.e. both the genotypes and phenotypes are standardized to have mean 0 and variance 1.
 }
 \details{
-The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, fit mixture model \code{pi0*N(0,sy2+theta^2 sx2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. Choose the value of \code{theta} that have the maximum \code{pi0} as the estimate of causal effect.
+The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, fit mixture model \code{pi0*N(0,sy2+theta^2 sx2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. Choose the value of \code{theta} that have the maximum \code{pi0} as the estimate of causal effect. Under the standardized scale (genotypes and phenotypes have mean 0 and variance 1), the estimated causal effect \code{theta} is the SD unit increase in \code{Y} per SD unit increase in \code{X}. Summary can be standardized by \code{beta_standardized=beta/se/sqrt(N); se_standardized=1/sqrt(N)}.
 }
 \examples{
 data("sumstats", package = "MRMix")
-est = MRMix(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2)
-est
+# Convert summary statistics to standardized scale
+betahat_x = sumstats$betahat_x/sumstats$sx/sqrt(sumstats$nx)
+betahat_y = sumstats$betahat_y/sumstats$sy/sqrt(sumstats$ny)
+sx = 1/sqrt(sumstats$nx)
+sy = 1/sqrt(sumstats$ny)
+# MRMix analysis
+est = MRMix(betahat_x, betahat_y, sx, sy)
+data.frame(est)
 }
 \references{
 Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analysis Using Mixture Models (MRMix) for Genetic Effect-Size-Distribution Leads to Robust Estimation of Causal Effects." bioRxiv (2018): 367821.

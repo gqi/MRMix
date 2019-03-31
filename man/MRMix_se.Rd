@@ -4,16 +4,16 @@
 \alias{MRMix_se}
 \title{Standard error of the MRMix estimator}
 \usage{
-MRMix_se(betahat_x, betahat_y, sx2, sy2, theta, pi0, sigma2)
+MRMix_se(betahat_x, betahat_y, sx, sy, theta, pi0, sigma2)
 }
 \arguments{
 \item{betahat_x}{GWAS effect estimates of the exposure. Vector of length \code{K}, where \code{K} is the number of instruments.}
 
 \item{betahat_y}{GWAS effect estimates of the outcome. Vector of length \code{K}.}
 
-\item{sx2}{Variance of \code{betahat_x}. Vector of length \code{K}.}
+\item{sx}{Standard error of \code{betahat_x}. Vector of length \code{K}.}
 
-\item{sy2}{Variance of \code{betahat_y}. Vector of length \code{K}.}
+\item{sy}{Standard error of \code{betahat_y}. Vector of length \code{K}.}
 
 \item{theta}{Estimate of causal effect. First output of MRMix}
 

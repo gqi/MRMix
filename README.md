@@ -1,6 +1,6 @@
 # MRMix
 
-R package for two-sample Mendelian randomization analysis using mixture models.
+R package for two-sample Mendelian randomization analysis using mixture models. For numerical stability, we recommend using the function in the standardized scale, i.e. both the genotypes and phenotypes are standardized to have mean 0 and variance 1. See Example for how to obtain summary statistics in the standardized scale
 
 ### System requirements
 
@@ -16,25 +16,20 @@ install_github("gqi/MRMix")
 ```
 library(MRMix)
 data("sumstats", package = "MRMix")
-est = MRMix(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2)
-se = MRMix_se(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2, est$theta, est$pi0, est$sigma2) # Standard error
-print(est)
-print(se)
+# Convert summary statistics to standardized scale
+betahat_x = sumstats$betahat_x/sumstats$sx/sqrt(sumstats$nx)
+betahat_y = sumstats$betahat_y/sumstats$sy/sqrt(sumstats$ny)
+sx = 1/sqrt(sumstats$nx)
+sy = 1/sqrt(sumstats$ny)
+# MRMix analysis
+est = MRMix(betahat_x, betahat_y, sx, sy)
+data.frame(est)
 
-## Expected output
-# $theta
-# [1] 0.22
-
-# $pi0
-# [1] 0.509395
-
-# $sigma2
-# [1] 9.04497e-05
-
-## Standard error
-# [1] 0.02084057
+#   theta       pi0       sigma2   SE_theta zstat_theta pvalue_theta
+# 1  0.21 0.4602256 8.998972e-05 0.02449794    8.572151 1.015702e-17
 ```
 Type `?MRMix` and `?MRMix_se` in `R` for more details. The software has been tested on MAC OS 10.11.5 with R version 3.5.1. Installation and demo should run within seconds.
+
 
 
 ### More information 

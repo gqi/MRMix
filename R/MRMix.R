@@ -1,19 +1,19 @@
 #' Two-sample Mendelian randomization analysis using mixture models
 #'
-#' @description Conducts Mendelian randomization analysis by fitting a mixture normal model for the bivariate effect size distribution of the exposure and the outcome. Uses GWAS summary level data to identify causal effects.
+#' @description Conducts Mendelian randomization analysis by fitting a mixture normal model for the bivariate effect size distribution of the exposure and the outcome. Uses GWAS summary level data to identify causal effects. For numerical stability, we recommend using the function in the standardized scale, i.e. both the genotypes and phenotypes are standardized to have mean 0 and variance 1.
 #'
 #' @param betahat_x GWAS effect estimates of the exposure. Vector of length \code{K}, where \code{K} is the number of instruments.
 #' @param betahat_y GWAS effect estimates of the outcome. Vector of length \code{K}.
-#' @param sx2 Variance of \code{betahat_x}. Vector of length \code{K}.
-#' @param sy2 Variance of \code{betahat_y}. Vector of length \code{K}.
+#' @param sx Standard error of \code{betahat_x}. Vector of length \code{K}.
+#' @param sy Standard error of \code{betahat_y}. Vector of length \code{K}.
 #' @param theta_temp_vec A vector of the grid search values for the causal effect \code{theta}.
 #' @param pi_init Initial value of the probability mass at the null component. See details.
 #' @param sigma_init Initial value of the variance of the non-null component. See details.
 #' @param profile Logical. Default to be \code{FALSE} and only return a list of 3 containing the estimate of causal effect (\code{theta}) and corresponding \code{pi0} and \code{sigma2}. If TRUE, returns a matrix of 3 columns. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values.
 
-#' @details The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, fit mixture model \code{pi0*N(0,sy2+theta^2 sx2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. Choose the value of \code{theta} that have the maximum \code{pi0} as the estimate of causal effect.
+#' @details The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, fit mixture model \code{pi0*N(0,sy2+theta^2 sx2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. Choose the value of \code{theta} that have the maximum \code{pi0} as the estimate of causal effect. Under the standardized scale (genotypes and phenotypes have mean 0 and variance 1), the estimated causal effect \code{theta} is the SD unit increase in \code{Y} per SD unit increase in \code{X}. Summary can be standardized by \code{beta_standardized=beta/se/sqrt(N); se_standardized=1/sqrt(N)}.
 #'
-#' @return A one-row data frame that contains
+#' @return A list that contains
 #' \item{theta}{Estimate of causal effect.}
 #' \item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}.}
 #' \item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
@@ -25,9 +25,16 @@
 #' @export
 #' @examples
 #' data("sumstats", package = "MRMix")
-#' est = MRMix(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx2, sumstats$sy2)
-#' est
-MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,by=0.01), pi_init = 0.6, sigma_init = 1e-5, profile = FALSE){
+#' # Convert summary statistics to standardized scale
+#' betahat_x = sumstats$betahat_x/sumstats$sx/sqrt(sumstats$nx)
+#' betahat_y = sumstats$betahat_y/sumstats$sy/sqrt(sumstats$ny)
+#' sx = 1/sqrt(sumstats$nx)
+#' sy = 1/sqrt(sumstats$ny)
+#' # MRMix analysis
+#' est = MRMix(betahat_x, betahat_y, sx, sy)
+#' data.frame(est)
+MRMix = function(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-0.49,0.5,by=0.01), pi_init = 0.6, sigma_init = 1e-5, profile = FALSE){
+    sx2 = sx^2; sy2 = sy^2
     EM_res = matrix(nrow = length(theta_temp_vec), ncol = 3)
     colnames(EM_res) = c("theta", "pi0", "sigma2")
 
@@ -77,9 +84,9 @@ MRMix = function(betahat_x, betahat_y, sx2, sy2, theta_temp_vec = seq(-0.49,0.5,
         est = list(theta = mean(EM_res[ind,1]),
                    pi0 = max(EM_res[,2]),
                    sigma2 = mean(EM_res[ind,3]))
-        est$SE_theta = MRMix_se(betahat_x, betahat_y, sx2, sy2, est$theta, est$pi0, est$sigma2) # Standard error
+        est$SE_theta = MRMix_se(betahat_x, betahat_y, sx, sy, est$theta, est$pi0, est$sigma2) # Standard error
         est$zstat_theta = est$theta/est$SE_theta
         est$pvalue_theta = 2*pnorm(-abs(est$zstat_theta))
-        return(data.frame(est))
+        return(est)
     }
 }

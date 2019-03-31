@@ -68,12 +68,12 @@ MRres$egger_sd = egger$StdError.Est
 
 theta_temp_vec = seq(-0.99,1,by=0.01) # 200 values in total
 
-res = MRMix(betahat_x, betahat_y, 1/nx, 1/ny, theta_temp_vec, pi_init = 0.6, sigma_init = 1e-5)
+res = MRMix(betahat_x, betahat_y, 1/sqrt(nx), 1/sqrt(ny), theta_temp_vec, pi_init = 0.6, sigma_init = 1e-5)
 
 theta_est = res$theta
 pi0_est = res$pi0
 sigma2_est = res$sigma2
-theta_se = MRMix_se(betahat_x, betahat_y, sx2=1/nx, sy2=1/ny, theta_est, pi0_est, sigma2_est)
+theta_se = MRMix_se(betahat_x, betahat_y, sx=1/sqrt(nx), sy=1/sqrt(ny), theta_est, pi0_est, sigma2_est)
 
 MRres$MRmix_est = theta_est
 MRres$MRmix_se_analyt = theta_se
