@@ -62,6 +62,7 @@ fwrite(data, file = "data_Height.txt", sep = "\t")
 
 
 ## Lipids ##
+# Link: http://csg.sph.umich.edu/willer/public/lipids2013/
 rm(list=ls())
 rm(list = ls())
 library(data.table)
@@ -94,6 +95,7 @@ for (trait in traitvec){
 
 
 ## Blood pressure ##
+# Link: http://www.nealelab.is/blog/2017/7/19/rapid-gwas-of-thousands-of-phenotypes-for-337000-samples-in-the-uk-biobank
 # diastolic
 rm(list=ls())
 library(data.table)
@@ -164,6 +166,7 @@ fwrite(data, file = "data_SBP.txt", sep = "\t")
 
 
 ## Age at menarche 2017 ##
+# Link: https://www.reprogen.org/Menarche_1KG_NatGen2017_WebsiteUpload.zip
 rm(list=ls())
 library(data.table)
 library(dplyr)
@@ -196,6 +199,7 @@ fwrite(data, file = "data_menarche2017.txt", sep = "\t")
 
 
 ## EduYears 2018 ##
+# Link: https://www.dropbox.com/s/ho58e9jmytmpaf8/GWAS_EA_excl23andMe.txt?dl=0
 rm(list=ls())
 library(data.table)
 library(dplyr)
@@ -230,6 +234,7 @@ fwrite(data, file = "data_EduYears2018.txt", sep = "\t")
 ################
 
 ## Coronary artery disease ##
+# http://www.cardiogramplusc4d.org/media/cardiogramplusc4d-consortium/data-downloads/cad.additive.Oct2015.pub.zip
 rm(list=ls())
 library(data.table)
 library(dplyr)
@@ -262,6 +267,7 @@ fwrite(data, file = "data_CAD.txt", sep = "\t")
 
 
 ## Major depressive disorder ##
+# https://www.med.unc.edu/pgc/results-and-downloads/data-use-agreement-forms/copy2_of_mdd2018_ex23andme%20_data_download_agreement
 rm(list=ls())
 library(data.table)
 library(dplyr)
@@ -297,6 +303,7 @@ fwrite(data, file = "data_MDD.txt", sep = "\t")
 
 
 ## Breast cancer ##
+# http://bcac.ccge.medschl.cam.ac.uk/bcacdata/oncoarray/gwas-icogs-and-oncoarray-summary-results/
 # The fourth element in rs_id is the effect allele
 rm(list = ls())
 library(data.table)
