@@ -6,7 +6,7 @@ To reproduce the results in our paper (Qi and Chatterjee, Nat Comms 2018), pleas
 * Linkage disequilibrium (LD) coefficients calculated from 1000G Phase 3 European sample, with ~1.2 million HapMap3 SNPs. Only pairs with `r2>=0.1` are included. Download [here](https://www.dropbox.com/s/yby3igxx6wwy120/LDinfo_with_R2.rda?dl=0). 
 * LD score calculated from 1000G Phase 3 European sample, with ~1.2 million HapMap3 SNPs. Only `r2` values greater than 0.01 are included. Download [here](https://www.dropbox.com/s/454l3q1ll9wpwvd/ldscore_thr_r0.1.rda?dl=0).
 
-Code for preprocessing and links to summary level data are provided [here](https://github.com/gqi/MRMix/blob/master/data_analysis/preprocess_summary_stats.R). 
+Code for preprocessing of summary level data is provided [here](https://github.com/gqi/MRMix/blob/master/data_analysis/preprocess_summary_stats.R). 
 
 Code for Mendelian randomziation analysis using `MRMix` and `MendelianRandomization` package is provided [here](https://github.com/gqi/MRMix/blob/master/data_analysis/MR_realdata_analysis.R).
 
