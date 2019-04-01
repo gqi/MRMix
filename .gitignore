@@ -2,4 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-simulations/.DS_Store
+.DS_Store
+.gitignore
+.Rbuildignore
