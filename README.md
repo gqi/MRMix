@@ -8,8 +8,7 @@ MRMix can be used on any operating system. R needs to be installed. Package `dev
 
 ### Installation
 ```
-library(devtools)
-install_github("gqi/MRMix")
+devtools::install_github("gqi/MRMix")
 ```
 
 ### Example
