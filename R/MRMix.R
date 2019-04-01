@@ -1,6 +1,6 @@
 #' Two-sample Mendelian randomization analysis using mixture models
 #'
-#' @description This function conducts Mendelian randomization analysis by fitting a mixture normal model to the bivariate effect size distribution of the exposure and the outcome. MRMix uses GWAS summary level data to identify causal effects. For numerical stability, we recommend using the function in the standardized scale, i.e. both the genotypes and phenotypes are standardized to have mean 0 and variance 1. See Examples for how to standardize summary statistics.
+#' @description This function conducts Mendelian randomization analysis by fitting a mixture normal model to the bivariate effect size distribution of the exposure and the outcome. MRMix uses GWAS summary level data to identify causal effects. For numerical stability, we recommend using the summary statistics in the standardized scale, i.e. both the genotypes and phenotypes are standardized to have mean 0 and variance 1. See Examples for how to standardize summary statistics.
 #'
 #' @param betahat_x GWAS effect estimates of the exposure. Vector of length \code{K}, where \code{K} is the number of instruments.
 #' @param betahat_y GWAS effect estimates of the outcome. Vector of length \code{K}.
