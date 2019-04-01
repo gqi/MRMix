@@ -1,13 +1,6 @@
 rm(list = ls())
 library(MASS)
 
-Nvec = c(5e4, 1e5, 2e5, 5e5, 1e6)
-pi1vec = c(0.005, 0.01)
-pthrvec = c(0.005, 5e-4, 5e-6, 5e-8)
-thetavec = c(-0.2, 0, 0.2)
-NxNy_ratio_vec = 1:5
-
-
 N = 2e5 # Sample size of exposure X
 pi1 = 0.01 # Proportion of valid instruments in the genome
 pthr = 5e-8 # P-value threshold for instrument selection
@@ -51,11 +44,3 @@ betahat.y = betahat.y[ind_filter]
 
 sumstats = data.frame(betahat_x = 3*betahat.x, betahat_y = 2*betahat.y, sx = 3/sqrt(nx), sy = 2/sqrt(ny), nx = nx, ny = ny)
 save(sumstats, file = "data/sumstats.RData")
-
-data("sumstats", package = "MRMix")
-sumstats$nx = 2e5
-sumstats$ny = 1e5
-sumstats$betahat_x = 3*sumstats$betahat_x
-sumstats$sx2 = 3^2*sumstats$sx2
-sumstats$betahat_y = 2*sumstats$betahat_y
-sumstats$sy2 = 2^2*sumstats$sy2
