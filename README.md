@@ -39,4 +39,4 @@ Reference: Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analy
 
 Scripts for simulations in this paper (scenarios A, B and C) are available [here](https://github.com/gqi/MRMix/tree/master/simulations). 
 
-Scripts for data analysis in this paper is available [here](https://github.com/gqi/MRMix/tree/master/data_analysis). A brief introduction is available [here](https://github.com/gqi/MRMix/wiki).
+Scripts for data analysis in this paper are available [here](https://github.com/gqi/MRMix/tree/master/data_analysis). A brief introduction is available [here](https://github.com/gqi/MRMix/wiki).
