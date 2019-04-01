@@ -15,8 +15,7 @@ sigma2x = 5e-5; sigma2y = 5e-5; rho = 0.5
 print(paste("N", N, "pthr", pthr, "pi1", pi1, "theta", theta, "NxNy_ratio", NxNy_ratio))
 nx = N; ny = N/NxNy_ratio # Sample size of X and Y
 
-repind=1
-set.seed(1245*repind)
+set.seed(1245)
 
 # Generate SNP indices of the 4 components
 ind1 = sample(M, round(M*pi1))
@@ -34,8 +33,6 @@ beta[ind3,2] = rnorm(length(ind3), mean = 0, sd = sqrt(sigma2y))
 # Generate observed GWAS summary statistics
 betahat.x = beta[,1] + rnorm(M, mean = 0, sd = sqrt(1/nx))
 betahat.y = beta[,2] + rnorm(M, mean = 0, sd = sqrt(1/ny))
-betahat.x.rev = betahat.y
-betahat.y.rev = betahat.x
 
 # Instrument selection
 ind_filter = which(2*(1-pnorm(sqrt(nx)*abs(betahat.x)))<pthr)
