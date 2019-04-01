@@ -34,7 +34,7 @@ A list that contains
 \item{pvalue_theta}{P-value from the z test for the causal effect.}
 }
 \description{
-This function conducts Mendelian randomization analysis by fitting a mixture normal model to the bivariate effect size distribution of the exposure and the outcome. MRMix uses GWAS summary level data to identify causal effects. For numerical stability, we recommend using the function in the standardized scale, i.e. both the genotypes and phenotypes are standardized to have mean 0 and variance 1. See Examples for how to standardize summary statistics.
+This function conducts Mendelian randomization analysis by fitting a mixture normal model to the bivariate effect size distribution of the exposure and the outcome. MRMix uses GWAS summary level data to identify causal effects. For numerical stability, we recommend using summary statistics in the standardized scale, i.e. both the genotypes and phenotypes are standardized to have mean 0 and variance 1. See Examples for how to standardize summary statistics.
 }
 \details{
 The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy2+theta^2 sx2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that have the maximum \code{pi0} as the estimate of causal effect. Under the standardized scale (genotypes and phenotypes have mean 0 and variance 1), the estimated causal effect \code{theta} is the SD unit increase in \code{Y} per SD unit increase in \code{X}. Summary statistics can be standardized by \code{beta_standardized=beta/se/sqrt(N); se_standardized=1/sqrt(N)}. See Examples for how to standardize summary statistics.
