@@ -1,6 +1,6 @@
 # MRMix
 
-R package for two-sample Mendelian randomization analysis using mixture models. For numerical stability, we recommend using the function in the standardized scale, i.e. both the genotypes and phenotypes are standardized to have mean 0 and variance 1. See Example for how to obtain summary statistics in the standardized scale
+R package for two-sample Mendelian randomization analysis using mixture models. For numerical stability, we recommend using the function in the standardized scale, i.e. both the genotypes and phenotypes are standardized to have mean 0 and variance 1. See Example for how to obtain summary statistics in the standardized scale.
 
 ### System requirements
 
@@ -23,7 +23,7 @@ sx = 1/sqrt(sumstats$nx)
 sy = 1/sqrt(sumstats$ny)
 # MRMix analysis
 est = MRMix(betahat_x, betahat_y, sx, sy)
-data.frame(est)
+data.frame(est) # True causal effect is 0.2.
 
 #   theta       pi0       sigma2   SE_theta zstat_theta pvalue_theta
 # 1  0.21 0.4602256 8.998972e-05 0.02449794    8.572151 1.015702e-17
@@ -36,3 +36,7 @@ Type `?MRMix` and `?MRMix_se` in `R` for more details. The software has been tes
 Authors: Guanghao Qi (gqi1@jhu.edu) and Nilanjan Chatterjee (nchatte2@jhu.edu)
 
 Reference: Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analysis Using Mixture Models (MRMix) for Genetic Effect-Size-Distribution Leads to Robust Estimation of Causal Effects." bioRxiv (2018): 367821.
+
+Scripts for simulations of this paper are available [here](https://github.com/gqi/MRMix/tree/master/simulations). 
+
+Scripts for data analysis of this paper is available [here](https://github.com/gqi/MRMix/wiki).
