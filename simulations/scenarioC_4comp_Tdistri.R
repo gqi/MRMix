@@ -1,6 +1,6 @@
 #' This is the script to directly simulate GWAS summary statistics without simulating the individual genotypes or phenotypes.
 #' Effect size beta's are generated using the 4-component mixture of T distributions.
-#' For a description, see Qi and Chatterjee, Nature Communcations 2018 - Methods - Simulation setup - Scenario A.
+#' For a description, see Qi and Chatterjee, Nature Communcations 2019 - Methods - Simulation setup - Scenario A.
 #'
 #' Usage: run the following line on Terminal command line
 #' Rscript scenarioC_4comp_Tdistri.R arg1 arg2 arg3 arg4 arg5

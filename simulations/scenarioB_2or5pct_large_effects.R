@@ -1,6 +1,6 @@
 #' This is the script to directly simulate GWAS summary statistics without simulating the individual genotypes or phenotypes.
 #' Effect size beta's are generated using the 4-component model with a small number of SNPs having distinctly larger effects than others.
-#' For a description, see Qi and Chatterjee, Nature Communcations 2018 - Methods - Simulation setup - Scenario B.
+#' For a description, see Qi and Chatterjee, Nature Communcations 2019 - Methods - Simulation setup - Scenario B.
 #'
 #' Usage: run the following line on Terminal command line
 #' Rscript scenarioB_2or5pct_large_effects.R arg1 arg2 arg3 arg4 arg5 arg6
