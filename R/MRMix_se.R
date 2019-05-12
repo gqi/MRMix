@@ -2,10 +2,10 @@
 #'
 #' @description This function calculates the standard error of the MRMix estimator using asymptotic theory.
 #'
-#' @param betahat_x GWAS effect estimates of the exposure. Vector of length \code{K}, where \code{K} is the number of instruments.
-#' @param betahat_y GWAS effect estimates of the outcome. Vector of length \code{K}.
-#' @param sx Standard error of \code{betahat_x}. Vector of length \code{K}.
-#' @param sy Standard error of \code{betahat_y}. Vector of length \code{K}.
+#' @param betahat_x GWAS effect estimates of the exposure, recommended to be in standardized scale. Vector of length \code{K}, where \code{K} is the number of instruments.
+#' @param betahat_y GWAS effect estimates of the outcome, recommended to be in standardized scale. Vector of length \code{K}.
+#' @param sx Standard error of \code{betahat_x}, recommended to be in standardized scale. Vector of length \code{K}.
+#' @param sy Standard error of \code{betahat_y}, recommended to be in standardized scale. Vector of length \code{K}.
 #' @param theta Estimate of causal effect.
 #' @param pi0 The probability mass of the null component corresponding to the estimated \code{theta}.
 #' @param sigma2 The variance of the non-null component corresponding to the estimated \code{theta}.
@@ -13,8 +13,7 @@
 #' @return The standard error of MRMix estimator.
 #'
 #' @references
-#' Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analysis Using Mixture Models (MRMix) for Genetic Effect-Size-Distribution Leads to Robust Estimation of Causal Effects." bioRxiv (2018): 367821.
-
+#' Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.
 #' @export
 MRMix_se = function(betahat_x, betahat_y, sx, sy, theta, pi0, sigma2){
     sx2 = sx^2; sy2 = sy^2

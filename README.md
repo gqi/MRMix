@@ -1,6 +1,6 @@
 # MRMix
 
-R package for two-sample Mendelian randomization analysis using mixture models. **For numerical stability, we recommend using summary statistics in the standardized scale: 1) for continuous phenotypes, both the genotypes and phenotypes need to be standardized to have mean 0 and variance 1; 2) For binary phenotypes, the genotypes need to be standardized to have mean 0 and variance 1.** Causal estimates are interpreted as standard deviation (SD) unit increase (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (assumed to be continous). See Example for how to obtain summary statistics in the standardized scale.
+R package for two-sample Mendelian randomization analysis using mixture models. **For numerical stability, we recommend using summary statistics in the standardized scale, i.e. 1) for continuous phenotype, the beta and SE when both the genotypes and phenotypes are standardized to have variance 1; 2) for binary phenotype, the beta and SE when the genotypes are standardized to have variance 1**. Causal estimates are interpreted as standard deviation (SD) unit increase (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (assumed to be continous). If standardized-scale summary statistics are not available, users may use z-statistics and effective sample size to transform their summary statistics to the standardized scale. See Example or type `?MRMix` for more information.
 
 ### System requirements
 
@@ -36,7 +36,7 @@ If the phenotype is continuous and analyzed with **linear regression**, or binar
 ### More information 
 Authors: Guanghao Qi (gqi1@jhu.edu) and Nilanjan Chatterjee (nchatte2@jhu.edu)
 
-Reference: Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analysis Using Mixture Models (MRMix) for Genetic Effect-Size-Distribution Leads to Robust Estimation of Causal Effects." bioRxiv (2018): 367821.
+Reference: Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.
 
 Scripts for simulations in this paper (scenarios A, B and C) are available [here](https://github.com/gqi/MRMix/tree/master/simulations). 
 

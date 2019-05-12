@@ -1,17 +1,17 @@
 #' Two-sample Mendelian randomization analysis using mixture models
 #'
-#' @description This function conducts Mendelian randomization analysis using the mixture model approach. MRMix takes GWAS summary level data as inputs to estimate causal effects of one trait on another. For numerical stability, we recommend using summary statistics in the standardized scale: 1) for continuous phenotype, both the genotypes and phenotypes need to be standardized to have mean 0 and variance 1; 2) For binary phenotype, the genotypes need to be standardized to have mean 0 and variance 1. Causal estimates are interpreted as standard deviation (SD) unit increase (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (assumed to be continous). See Details and Examples for more information.
+#' @description This function conducts Mendelian randomization analysis using the mixture model approach. MRMix takes GWAS summary level data (beta and standard error (SE)) as inputs to estimate causal effects of one trait on another. For numerical stability, we recommend using summary statistics in the standardized scale, i.e. 1) for continuous phenotype, the beta and SE when both the genotypes and phenotypes are standardized to have variance 1; 2) for binary phenotype, the beta and SE when the genotypes are standardized to have variance 1. Causal estimates are interpreted as standard deviation (SD) unit increase (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (assumed to be continous). If standardized-scale summary statistics are not available, users may use z-statistics and effective sample size to transform their summary statistics to the standardized scale. See Details and Examples for more information.
 #'
-#' @param betahat_x GWAS effect estimates of the exposure. Vector of length \code{K}, where \code{K} is the number of instruments.
-#' @param betahat_y GWAS effect estimates of the outcome. Vector of length \code{K}.
-#' @param sx Standard error of \code{betahat_x}. Vector of length \code{K}.
-#' @param sy Standard error of \code{betahat_y}. Vector of length \code{K}.
-#' @param theta_temp_vec A vector of the grid search values for the causal effect \code{theta}.
-#' @param pi_init Initial value of the probability mass at the null component. See Details.
-#' @param sigma_init Initial value of the variance of the non-null component. See Details.
-#' @param profile Logical. Default to be \code{FALSE} and return a list of 6 containing the estimate of causal effect (\code{theta}), corresponding \code{pi0} and \code{sigma2}, standard error, z statistic and p-value. If TRUE, returns a matrix of 3 columns. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values.
+#' @param betahat_x GWAS effect estimates of the exposure, recommended to be in standardized scale. Vector of length \code{K}, where \code{K} is the number of instruments.
+#' @param betahat_y GWAS effect estimates of the outcome, recommended to be in standardized scale. Vector of length \code{K}.
+#' @param sx Standard error of \code{betahat_x}, recommended to be in standardized scale. Vector of length \code{K}.
+#' @param sy Standard error of \code{betahat_y}, recommended to be in standardized scale. Vector of length \code{K}.
+#' @param theta_temp_vec A vector of the grid search values for the causal effect \code{theta}. Default to be \code{seq(-0.49,0.5,by=0.01)}. Users may adjust the grid if larger effects are possible.
+#' @param pi_init Initial value of the probability mass at the null component. Default to be 0.6. See Details.
+#' @param sigma_init Initial value of the variance of the non-null component. Default to be 1e-5. See Details.
+#' @param profile Logical. Default to be \code{FALSE} and return a list of 6 containing the estimate of causal effect (\code{theta}), corresponding \code{pi0} and \code{sigma2}, standard error, z statistic and p-value. If TRUE, returns a matrix of 3 columns containing details of the grid search. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values.
 
-#' @details The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy^2+theta^2*sx^2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that leads to the maximum \code{pi0} as the estimate of causal effect. Under the standardized scale, the estimated causal effect \code{theta} is the SD unit increase or logOR of \code{Y} per SD unit increase in \code{X}. Summary statistics can be standardized by \code{beta_standardized=beta/se/sqrt(N); se_standardized=1/sqrt(N)}, if the phenotype is continuous and analyzed with linear regression, or binary and analyzed with logistic regression. For continuous phenotypes, N is the total sample size and for binary phenotypes N is the effective sample size, calculated as Ncase*Ncontrol/(Ncase+Ncontrol). This formula may not hold for non-standard analysis methods and standardization would require the phenotypic variance. See Examples for how to obtain summary statistics in the standardized scale.
+#' @details The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy^2+theta^2*sx^2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that leads to the maximum \code{pi0} as the estimate of causal effect. Under the standardized scale, the estimated causal effect \code{theta} is the SD unit increase or logOR of \code{Y} per SD unit increase in \code{X}. Summary statistics can be standardized by \code{beta_standardized=beta/(se*sqrt(N)); se_standardized=1/sqrt(N)}, where N is the total sample size if \code{Y} is continuous and the effective sample size \code{Ncase*Ncontrol/(Ncase+Ncontrol)} if \code{Y} is binary. This formula only hold for summary statistics generated by standard analysis methods, i.e. linear and logistic regression.
 #'
 #' @return A list that contains
 #' \item{theta}{Estimate of causal effect.}
@@ -21,7 +21,7 @@
 #' \item{zstat_theta}{Z-statistic for test of the causal effect estimate.}
 #' \item{pvalue_theta}{P-value from the z test for the causal effect.}
 #' @references
-#' Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian Randomization Analysis Using Mixture Models (MRMix) for Genetic Effect-Size-Distribution Leads to Robust Estimation of Causal Effects." bioRxiv (2018): 367821.
+#' Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.
 #' @export
 #' @examples
 #' data("sumstats", package = "MRMix")
