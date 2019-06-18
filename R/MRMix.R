@@ -4,8 +4,8 @@
 #'
 #' @param betahat_x GWAS effect estimates of the exposure, recommended to be in standardized scale. Vector of length \code{K}, where \code{K} is the number of instruments.
 #' @param betahat_y GWAS effect estimates of the outcome, recommended to be in standardized scale. Vector of length \code{K}.
-#' @param sx Standard error of \code{betahat_x}, recommended to be in standardized scale. Vector of length \code{K}.
-#' @param sy Standard error of \code{betahat_y}, recommended to be in standardized scale. Vector of length \code{K}.
+#' @param sx Standard error of \code{betahat_x}, recommended to be in standardized scale. Vector of length \code{K} or a single number. A single number indicates all the SNPs have the same standard error.
+#' @param sy Standard error of \code{betahat_y}, recommended to be in standardized scale. Vector of length \code{K} or a single number. A single number indicates all the SNPs have the same standard error.
 #' @param theta_temp_vec A vector of the grid search values for the causal effect \code{theta}. Default to be \code{seq(-0.49,0.5,by=0.01)}. Users may adjust the grid if larger effects are possible.
 #' @param pi_init Initial value of the probability mass at the null component. Default to be 0.6. See Details.
 #' @param sigma_init Initial value of the variance of the non-null component. Default to be 1e-5. See Details.
@@ -34,6 +34,10 @@
 #' est = MRMix(betahat_x, betahat_y, sx, sy)
 #' data.frame(est) # True causal effect is 0.2.
 MRMix = function(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-0.49,0.5,by=0.01), pi_init = 0.6, sigma_init = 1e-5, profile = FALSE){
+    if (length(betahat_x)!=length(betahat_y)) stop("betahat_x and betahat_y should have the same length.")
+    if (length(sx)!=length(betahat_x) & length(sx)!=1) stop("sx should have the same length as betahat_x or be a single number.")
+    if (length(sy)!=length(betahat_y) & length(sy)!=1) stop("sy should have the same length as betahat_y or be a single number.")
+
     sx2 = sx^2; sy2 = sy^2
     EM_res = matrix(nrow = length(theta_temp_vec), ncol = 3)
     colnames(EM_res) = c("theta", "pi0", "sigma2")
