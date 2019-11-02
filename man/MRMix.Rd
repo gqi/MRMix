@@ -12,9 +12,9 @@ MRMix(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-1, 1, by =
 
 \item{betahat_y}{GWAS effect estimates of the outcome, recommended to be in standardized scale. Vector of length \code{K}.}
 
-\item{sx}{Standard error of \code{betahat_x}, recommended to be in standardized scale. Vector of length \code{K} or a single number. A single number indicates all the SNPs have the same standard error.}
+\item{sx}{Standard error of \code{betahat_x}, recommended to be in standardized scale. Vector of length \code{K}.}
 
-\item{sy}{Standard error of \code{betahat_y}, recommended to be in standardized scale. Vector of length \code{K} or a single number. A single number indicates all the SNPs have the same standard error.}
+\item{sy}{Standard error of \code{betahat_y}, recommended to be in standardized scale. Vector of length \code{K}.}
 
 \item{theta_temp_vec}{A vector of the grid search values for the causal effect \code{theta}. Default to be \code{seq(-1,1,by=0.01)}. Users may adjust the grid if larger effects are possible.}
 

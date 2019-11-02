@@ -30,8 +30,8 @@ standardize(betahat_x, betahat_y, sx, sy, contbin_x, contbin_y, nx, ny,
 A list that contains
 \item{betahat_x_std}{Standardized \code{betahat} for the exposure.}
 \item{betahat_y_std}{Standardized \code{betahat} for the outcome.}
-\item{sx_std}{Standard error of \code{betahat_x}.}
-\item{sy_std}{Standard error of \code{betahat_y}.}
+\item{sx_std}{Standard error of \code{betahat_x_std}.}
+\item{sy_std}{Standard error of \code{betahat_y_std}.}
 }
 \description{
 This function standardizes GWAS summary statistics (beta and standard error (SE)), i.e. 1) for continuous phenotype, transform them to the beta and SE when both the genotypes and phenotypes are standardized to have variance 1; 2) for binary phenotype, transform them to the beta and SE when the genotypes are standardized to have variance 1. This function applies to continuous phenotypes analyzed with linear regression and binary phenotypes analyzed with logistic regression. Do not use for other types of phenotypes or other analytic methods.

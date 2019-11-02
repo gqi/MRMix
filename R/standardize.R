@@ -17,8 +17,8 @@
 #' @return A list that contains
 #' \item{betahat_x_std}{Standardized \code{betahat} for the exposure.}
 #' \item{betahat_y_std}{Standardized \code{betahat} for the outcome.}
-#' \item{sx_std}{Standard error of \code{betahat_x}.}
-#' \item{sy_std}{Standard error of \code{betahat_y}.}
+#' \item{sx_std}{Standard error of \code{betahat_x_std}.}
+#' \item{sy_std}{Standard error of \code{betahat_y_std}.}
 #'
 #' @references
 #' Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.

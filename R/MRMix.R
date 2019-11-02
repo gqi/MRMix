@@ -4,8 +4,8 @@
 #'
 #' @param betahat_x GWAS effect estimates of the exposure, recommended to be in standardized scale. Vector of length \code{K}, where \code{K} is the number of instruments.
 #' @param betahat_y GWAS effect estimates of the outcome, recommended to be in standardized scale. Vector of length \code{K}.
-#' @param sx Standard error of \code{betahat_x}, recommended to be in standardized scale. Vector of length \code{K} or a single number. A single number indicates all the SNPs have the same standard error.
-#' @param sy Standard error of \code{betahat_y}, recommended to be in standardized scale. Vector of length \code{K} or a single number. A single number indicates all the SNPs have the same standard error.
+#' @param sx Standard error of \code{betahat_x}, recommended to be in standardized scale. Vector of length \code{K}.
+#' @param sy Standard error of \code{betahat_y}, recommended to be in standardized scale. Vector of length \code{K}.
 #' @param theta_temp_vec A vector of the grid search values for the causal effect \code{theta}. Default to be \code{seq(-1,1,by=0.01)}. Users may adjust the grid if larger effects are possible.
 #' @param pi_init Initial value of the probability mass at the null component. Default to be 0.6. See Details.
 #' @param sigma_init Initial value of the variance of the non-null component. Default to be 1e-5. See Details.
