@@ -4,7 +4,7 @@
 \alias{MRMix}
 \title{Two-sample Mendelian randomization analysis using mixture models}
 \usage{
-MRMix(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-0.49, 0.5, by =
+MRMix(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-1, 1, by =
   0.01), pi_init = 0.6, sigma_init = 1e-05, profile = FALSE)
 }
 \arguments{
@@ -16,13 +16,13 @@ MRMix(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-0.49, 0.5, by =
 
 \item{sy}{Standard error of \code{betahat_y}, recommended to be in standardized scale. Vector of length \code{K} or a single number. A single number indicates all the SNPs have the same standard error.}
 
-\item{theta_temp_vec}{A vector of the grid search values for the causal effect \code{theta}. Default to be \code{seq(-0.49,0.5,by=0.01)}. Users may adjust the grid if larger effects are possible.}
+\item{theta_temp_vec}{A vector of the grid search values for the causal effect \code{theta}. Default to be \code{seq(-1,1,by=0.01)}. Users may adjust the grid if larger effects are possible.}
 
 \item{pi_init}{Initial value of the probability mass at the null component. Default to be 0.6. See Details.}
 
 \item{sigma_init}{Initial value of the variance of the non-null component. Default to be 1e-5. See Details.}
 
-\item{profile}{Logical. Default to be \code{FALSE} and return a list of 6 containing the estimate of causal effect (\code{theta}), corresponding \code{pi0} and \code{sigma2}, standard error, z statistic and p-value. If TRUE, returns a matrix of 3 columns containing details of the grid search. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values.}
+\item{profile}{Whether to include the profile matrix. Default to be \code{FALSE}. If \code{TRUE}, include the profile matrix in the output. See Value \code{profile_mat} for details.}
 }
 \value{
 A list that contains
@@ -32,23 +32,24 @@ A list that contains
 \item{SE_theta}{Standard error of causal effect estimate.}
 \item{zstat_theta}{Z-statistic for test of the causal effect estimate.}
 \item{pvalue_theta}{P-value from the z test for the causal effect.}
+\item{profile_mat}{A matrix of 3 columns containing details of the grid search. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values. Only returned if \code{profile=TRUE}.}
 }
 \description{
-This function conducts Mendelian randomization analysis using the mixture model approach. MRMix takes GWAS summary level data (beta and standard error (SE)) as inputs to estimate causal effects of one trait on another. For numerical stability, we recommend using summary statistics in the standardized scale, i.e. 1) for continuous phenotype, the beta and SE when both the genotypes and phenotypes are standardized to have variance 1; 2) for binary phenotype, the beta and SE when the genotypes are standardized to have variance 1. Causal estimates are interpreted as standard deviation (SD) unit increase (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (assumed to be continous). If standardized-scale summary statistics are not available, users may use z-statistics and effective sample size to transform their summary statistics to the standardized scale. See Details and Examples for more information.
+This function conducts Mendelian randomization analysis using the mixture model approach. MRMix takes GWAS summary level data (beta and standard error (SE)) as inputs to estimate causal effects of one trait on another. For numerical stability, we recommend using summary statistics in the standardized scale, i.e. 1) for continuous phenotype, the beta and SE when both the genotypes and phenotypes are standardized to have variance 1; 2) for binary phenotype, the beta and SE when the genotypes are standardized to have variance 1. Causal estimates are interpreted as standard deviation (SD) unit increase (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (assumed to be continous). If standardized-scale summary statistics are not available, users may use the \code{standardize()} function to transform their summary statistics to the standardized scale. See Details and Examples for more information.
 }
 \details{
-The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy^2+theta^2*sx^2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that leads to the maximum \code{pi0} as the estimate of causal effect. Under the standardized scale, the estimated causal effect \code{theta} is the SD unit increase or logOR of \code{Y} per SD unit increase in \code{X}. Summary statistics can be standardized by \code{beta_standardized=beta/(se*sqrt(N)); se_standardized=1/sqrt(N)}, where N is the total sample size if \code{Y} is continuous and the effective sample size \code{Ncase*Ncontrol/(Ncase+Ncontrol)} if \code{Y} is binary. This formula only hold for summary statistics generated by standard analysis methods, i.e. linear and logistic regression.
+The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy^2+theta^2*sx^2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that leads to the maximum \code{pi0} as the estimate of causal effect. Under the standardized scale, the estimated causal effect \code{theta} is the SD unit increase or logOR of \code{Y} per SD unit increase in \code{X}. Summary statistics can be standardized using the \code{standardize()} function if phenotypes are continuous and analyzed with linear regression, or binary and analyzed with logistic regression.
 }
 \examples{
 data("sumstats", package = "MRMix")
 # Convert summary statistics to standardized scale
-betahat_x = sumstats$betahat_x/sumstats$sx/sqrt(sumstats$nx)
-betahat_y = sumstats$betahat_y/sumstats$sy/sqrt(sumstats$ny)
-sx = 1/sqrt(sumstats$nx)
-sy = 1/sqrt(sumstats$ny)
+data_std = standardize(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx, sumstats$sy, contbin_x = "continuous", contbin_y = "continuous", sumstats$nx, sumstats$ny, MAF = NULL)
 # MRMix analysis
-est = MRMix(betahat_x, betahat_y, sx, sy)
-data.frame(est) # True causal effect is 0.2.
+est = MRMix(data_std$betahat_x_std, data_std$betahat_y_std, data_std$sx_std, data_std$sy_std)
+str(est) # True causal effect is 0.2.
+# Include profile matrix
+est = MRMix(data_std$betahat_x_std, data_std$betahat_y_std, data_std$sx_std, data_std$sy_std, profile = TRUE)
+str(est)
 }
 \references{
 Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.

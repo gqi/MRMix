@@ -2,3 +2,4 @@
 
 export(MRMix)
 export(MRMix_se)
+export(standardize)
