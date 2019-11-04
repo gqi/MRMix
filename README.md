@@ -1,6 +1,6 @@
 # MRMix
 
-R package for two-sample Mendelian randomization analysis using mixture models. **For numerical stability, we recommend using summary statistics in the standardized scale, i.e. 1) for continuous phenotype, the beta and SE when both the genotypes and phenotypes are standardized to have variance 1; 2) for binary phenotype, the beta and SE when the genotypes are standardized to have variance 1**. Causal estimates are interpreted as standard deviation (SD) unit increase (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (assumed to be continous). If standardized-scale summary statistics are not available, users may use the `standardize` function to transform their summary statistics to the standardized scale. See Example or type `?MRMix` for more information.
+R package for two-sample Mendelian randomization analysis using mixture models. **We recommend using summary statistics in the standardized scale: 1) for continuous phenotypes, the data should be standardized w.r.t. genotypic and phenotypic variance; 2) for binary phenotypes, the data should be standardized w.r.t genotypic variance**. Causal estimates are interpreted as standard deviation (SD) unit increase in the mean (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (if continous). If standardized-scale summary statistics are not available, users may use the `standardize` function to standardize their data. See Example or type `?MRMix` for more information.
 
 ### System requirements
 
@@ -12,6 +12,17 @@ devtools::install_github("gqi/MRMix")
 ```
 
 ### Example
+
+If the summary statistics have been standardized
+```
+library(MRMix)
+data("sumstats_std", package = "MRMix") # sumstats_std has been standardized
+
+est = MRMix(sumstats_std$betahat_x_std, sumstats_std$betahat_y_std, sumstats_std$sx_std, sumstats_std$sy_std)
+str(est)
+```
+
+If the data have not been standardized
 ```
 library(MRMix)
 data("sumstats", package = "MRMix")
@@ -25,7 +36,7 @@ est = MRMix(data_std$betahat_x_std, data_std$betahat_y_std, data_std$sx_std, dat
 str(est)
 ```
 
-`standardize()` can be used if the phenotype is continuous and analyzed with **linear regression**, or binary and analyzed with **logistic regression**. For other types of phenotypes or other analytic methods, the user needs to standardize the data independently before using `MRMix` function. Type `?MRMix` in `R` for more details. The software has been tested on MAC OS 10.11.5 with 2.8 GHz Intel Core i7 and R version 3.5.1. Installation and the Example complete within seconds on this platform.
+`standardize()` can be used if the phenotype is continuous and analyzed with **linear regression**, or binary and analyzed with **logistic regression**. For other types of phenotypes or other analytic methods, the users need to standardize the data independently before using `MRMix`. Type `?MRMix` in `R` for more details. The software has been tested on MAC OS 10.11.5 with 2.8 GHz Intel Core i7 and R version 3.5.1. Installation and the Example complete within seconds on this platform.
 
 
 
