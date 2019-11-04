@@ -22,7 +22,7 @@ est = MRMix(sumstats_std$betahat_x_std, sumstats_std$betahat_y_std, sumstats_std
 str(est)
 ```
 
-If the data have not been standardized:
+If the summary statistics have not been standardized:
 ```
 library(MRMix)
 data("sumstats", package = "MRMix")
