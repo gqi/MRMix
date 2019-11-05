@@ -1,6 +1,6 @@
 #' Standardize summary statistics for MRMix analysis
 #'
-#' @description This function standardizes GWAS summary statistics 1) w.r.t. genotypic and phenotypic variance for continuous phenotypes and 2) w.r.t genotypic variance for binary phenotypes. This function assumes that summary statitics for continuous phenotypes are from linear regression and those for binary phenotypes are from logistic regression. Do not use for other types of phenotypes or other analytic methods.
+#' @description This function standardizes GWAS summary statistics 1) w.r.t. genotypic and phenotypic variance for continuous phenotypes and 2) w.r.t genotypic variance for binary phenotypes. This function assumes that the summary statistics are estimates from linear or logistic regression. Do not use for other models.
 #'
 #' @param betahat_x GWAS effect estimates of the exposure. Vector of length \code{K}, where \code{K} is the number of instruments.
 #' @param betahat_y GWAS effect estimates of the outcome. Vector of length \code{K}.
@@ -8,8 +8,8 @@
 #' @param sy Standard error of \code{betahat_y}. Vector of length \code{K}.
 #' @param contbin_x Is the exposure a continuous or binary trait? Set to \code{contbin_x="continuous"} or \code{contbin_x="binary"}. Or set to \code{contbin_x="n"} if standardization is not needed.
 #' @param contbin_y Is the outcome a continuous or binary trait? Set to \code{contbin_y="continuous"} or \code{contbin_y="binary"}. Or set to \code{contbin_y="n"} if standardization is not needed.
-#' @param nx SNP-specific sample size of the study associated with the exposure. Vector of length \code{K} or a single number. A single number indicates all the SNPs have the same sample size. Set to \code{NULL} if trait is binary. Summary statistics for binary traits are standardized w.r.t. to the genotypic variance which can be calculated using MAF under Hardy-Weinberg equilibrium. Hence sample size is not needed.
-#' @param ny SNP-specific sample size of the study associated with the outcome. Vector of length \code{K} or a single number. A single number indicates all the SNPs have the same sample size. Set to \code{NULL} if trait is binary. Same explanation as for \code{nx}.
+#' @param nx SNP-specific sample size (recommended) or total sample size of the study associated with the exposure. Vector of length \code{K} or a single number. Set to \code{NULL} if trait is binary. Summary statistics for binary traits are standardized w.r.t. to the genotypic variance which can be calculated using MAF under Hardy-Weinberg equilibrium. Hence sample size is not needed for binary traits.
+#' @param ny SNP-specific sample size (recommended) or total sample size of the study associated with the outcome. Vector of length \code{K} or a single number. Set to \code{NULL} if trait is binary for the same reason as for \code{nx}.
 #' @param MAF Minor allele frequency. Vector of length \code{K}. Set to \code{NULL} if both traits are continuous. Summary statistics for continuous traits are standardized as z statistics rescaled by sample size, hence MAF is not needed.
 #'
 #' @details For continuous phenotypes analyzed with linear regression, data are standardized by \code{beta_standardized=beta/(se*sqrt(N)); se_standardized=1/sqrt(N)}; for binary phenotypes analyzed with logistic regression, data are standardized by \code{beta_standardized=beta*sqrt(2*MAF*(1-MAF)); se_standardized=se*sqrt(2*MAF*(1-MAF))}.

@@ -1,6 +1,6 @@
 #' Two-sample Mendelian randomization analysis using mixture models
 #'
-#' @description This function conducts Mendelian randomization analysis using the mixture model approach. MRMix takes GWAS summary statistics as inputs to estimate causal effects of one trait on another. We recommend using summary statistics in the standardized scale: 1) for continuous phenotypes, the data should be standardized w.r.t. genotypic and phenotypic variance; 2) for binary phenotypes, the data should be standardized w.r.t genotypic variance. Causal estimates are interpreted as standard deviation (SD) unit increase in the mean (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (if continous). If standardized summary statistics are not available, users may use the \code{standardize} function to standardize their data.. See Details and Examples for more information.
+#' @description This function conducts Mendelian randomization analysis using the mixture model approach. MRMix takes GWAS summary statistics as inputs to estimate causal effects of one trait on another. We recommend using summary statistics in the standardized scale: 1) for continuous phenotypes, the data should be standardized w.r.t. genotypic and phenotypic variance; 2) for binary phenotypes, the data should be standardized w.r.t genotypic variance. If the data are not in the standardized scale, users may use the \code{standardize} function to standardize their data. See Details and Examples for more information.
 #'
 #' @param betahat_x GWAS effect estimates of the exposure, recommended to be in standardized scale. Vector of length \code{K}, where \code{K} is the number of instruments.
 #' @param betahat_y GWAS effect estimates of the outcome, recommended to be in standardized scale. Vector of length \code{K}.
@@ -11,10 +11,10 @@
 #' @param sigma_init Initial value of the variance of the non-null component. Default to be 1e-5. See Details.
 #' @param profile Whether to include the profile matrix. Default to be \code{FALSE}. If \code{TRUE}, include the profile matrix in the output. See Value \code{profile_mat} for details.
 #'
-#' @details The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy^2+theta^2*sx^2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that leads to the maximum \code{pi0} as the estimate of causal effect. Under the standardized scale, the estimated causal effect \code{theta} is the SD unit increase or logOR of \code{Y} per SD unit increase in \code{X}. Summary statistics can be standardized using the \code{standardize()} function if phenotypes are continuous and analyzed with linear regression, or binary and analyzed with logistic regression.
+#' @details The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy^2+theta^2*sx^2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that leads to the maximum \code{pi0} as the estimate of causal effect. Summary statistics can be standardized using the \code{standardize()} function if they are estimates from linear or logistic regression. Do not use for other models.
 #'
 #' @return A list that contains
-#' \item{theta}{Estimate of causal effect.}
+#' \item{theta}{Estimate of causal effect. In the standardized scale, \code{theta} is the standard deviation (SD) unit increase in the mean (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (if continous).}
 #' \item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}.}
 #' \item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
 #' \item{SE_theta}{Standard error of causal effect estimate.}

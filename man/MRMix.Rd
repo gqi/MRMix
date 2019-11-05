@@ -26,7 +26,7 @@ MRMix(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-1, 1, by =
 }
 \value{
 A list that contains
-\item{theta}{Estimate of causal effect.}
+\item{theta}{Estimate of causal effect. In the standardized scale, \code{theta} is the standard deviation (SD) unit increase in the mean (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (if continous).}
 \item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}.}
 \item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
 \item{SE_theta}{Standard error of causal effect estimate.}
@@ -35,10 +35,10 @@ A list that contains
 \item{profile_mat}{A matrix of 3 columns containing details of the grid search. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values. Only returned if \code{profile=TRUE}.}
 }
 \description{
-This function conducts Mendelian randomization analysis using the mixture model approach. MRMix takes GWAS summary statistics as inputs to estimate causal effects of one trait on another. We recommend using summary statistics in the standardized scale: 1) for continuous phenotypes, the data should be standardized w.r.t. genotypic and phenotypic variance; 2) for binary phenotypes, the data should be standardized w.r.t genotypic variance. Causal estimates are interpreted as standard deviation (SD) unit increase in the mean (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (if continous). If standardized summary statistics are not available, users may use the \code{standardize} function to standardize their data.. See Details and Examples for more information.
+This function conducts Mendelian randomization analysis using the mixture model approach. MRMix takes GWAS summary statistics as inputs to estimate causal effects of one trait on another. We recommend using summary statistics in the standardized scale: 1) for continuous phenotypes, the data should be standardized w.r.t. genotypic and phenotypic variance; 2) for binary phenotypes, the data should be standardized w.r.t genotypic variance. If the data are not in the standardized scale, users may use the \code{standardize} function to standardize their data. See Details and Examples for more information.
 }
 \details{
-The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy^2+theta^2*sx^2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that leads to the maximum \code{pi0} as the estimate of causal effect. Under the standardized scale, the estimated causal effect \code{theta} is the SD unit increase or logOR of \code{Y} per SD unit increase in \code{X}. Summary statistics can be standardized using the \code{standardize()} function if phenotypes are continuous and analyzed with linear regression, or binary and analyzed with logistic regression.
+The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy^2+theta^2*sx^2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that leads to the maximum \code{pi0} as the estimate of causal effect. Summary statistics can be standardized using the \code{standardize()} function if they are estimates from linear or logistic regression. Do not use for other models.
 }
 \examples{
 data("sumstats", package = "MRMix")
