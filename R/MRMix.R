@@ -1,20 +1,20 @@
 #' Two-sample Mendelian randomization analysis using mixture models
 #'
-#' @description This function conducts Mendelian randomization analysis using the mixture model approach. MRMix takes GWAS summary statistics as inputs to estimate causal effects of one trait on another. We recommend using summary statistics in the standardized scale: 1) for continuous phenotypes, the data should be standardized w.r.t. genotypic and phenotypic variance; 2) for binary phenotypes, the data should be standardized w.r.t genotypic variance. If the data are not in the standardized scale, users may use the \code{standardize} function to standardize their data. See Details and Examples for more information.
+#' @description This function conducts Mendelian randomization analysis using an underlying mixture model incorporating a fraction of the genetic instruments to have direct effect on the outcome (horizontal pleiotropy). MRMix takes GWAS summary statistics as inputs to estimate causal effects of one trait on another. For stability of the method, we recommend using summary statistics in the standardized scale: 1) For both binary and continuous traits, summary-statistics should be standardized by genotypic variance; 2) In addition, for continuous phenotype, summary-statistics should be standardized by phenotypic variance. If the data are not in the standardized scale, users may use the standardize function to standardize their data. See Details and Examples for more information.
 #'
-#' @param betahat_x GWAS effect estimates of the exposure, recommended to be in standardized scale. Vector of length \code{K}, where \code{K} is the number of instruments.
+#' @param betahat_x GWAS effect estimates of the exposure, recommended to be in standardized scale. Vector of length \code{K}, where \code{K} is the number of instruments (SNPs).
 #' @param betahat_y GWAS effect estimates of the outcome, recommended to be in standardized scale. Vector of length \code{K}.
 #' @param sx Standard error of \code{betahat_x}, recommended to be in standardized scale. Vector of length \code{K}.
 #' @param sy Standard error of \code{betahat_y}, recommended to be in standardized scale. Vector of length \code{K}.
 #' @param theta_temp_vec A vector of the grid search values for the causal effect \code{theta}. Default to be \code{seq(-1,1,by=0.01)}. Users may adjust the grid if larger effects are possible.
-#' @param pi_init Initial value of the probability mass at the null component. Default to be 0.6. See Details.
-#' @param sigma_init Initial value of the variance of the non-null component. Default to be 1e-5. See Details.
+#' @param pi_init Initial value of the probability mass at the null component of the mixture model corresponding to underlying valid instruments. Default to be 0.6. See Details.
+#' @param sigma_init Initial value of the variance of the non-null component of the mixture model which corresponds to underlying invalid instruments with pleiotropic effect. Default to be 1e-5. See Details.
 #' @param profile Whether to include the profile matrix. Default to be \code{FALSE}. If \code{TRUE}, include the profile matrix in the output. See Value \code{profile_mat} for details.
 #'
-#' @details The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy^2+theta^2*sx^2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that leads to the maximum \code{pi0} as the estimate of causal effect. Summary statistics can be standardized using the \code{standardize()} function if they are estimates from linear or logistic regression. Do not use for other models.
+#' @details The algorithm searches over a grid of possible values of the causal effect \code{theta}. For each fixed \code{theta}, it fits mixture model \code{pi0*N(0,sy^2+theta^2*sx^2)+(1-pi0)*N(0,sigma2)} on the residual \code{betahat_y-theta*betahat_x}. It then chooses the value of \code{theta} that leads to the maximum \code{pi0} as the estimate of causal effect. Summary statistics can be standardized using the \code{standardize()} function if they are estimates from linear or logistic regression. Do not use \code{Standardize()} for other models.
 #'
 #' @return A list that contains
-#' \item{theta}{Estimate of causal effect. In the standardized scale, \code{theta} is the standard deviation (SD) unit increase in the mean (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (if continous).}
+#' \item{theta}{Estimate of causal effect. Assuming the summary statistics are standardized, \code{theta} represents increase in mean value of Y in s.d. unit of Y (for continuous outcomes) or log-OR of Y (for binary outcomes) associated with per s.d. unit increase in values of X (for continuous exposures) or X changing from 0 to 1 (for binary exposures).}
 #' \item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}.}
 #' \item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
 #' \item{SE_theta}{Standard error of causal effect estimate.}
@@ -22,7 +22,8 @@
 #' \item{pvalue_theta}{P-value from the z test for the causal effect.}
 #' \item{profile_mat}{A matrix of 3 columns containing details of the grid search. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values. Only returned if \code{profile=TRUE}.}
 #' @references
-#' Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.
+#' 1. Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.
+#' 2. Qi, Guanghao, and Nilanjan Chatterjee. "A Comprehensive Evaluation of Methods for Mendelian Randomization Using Realistic Simulations of Genome-wide Association Studies." bioRxiv (2019): 702787.
 #' @export
 #' @examples
 #' data("sumstats", package = "MRMix")

@@ -1,6 +1,6 @@
 # MRMix
 
-R package for two-sample Mendelian randomization analysis using mixture models. MRMix takes GWAS summary statistics as inputs to estimate causal effects of one trait on another. **We recommend using summary statistics in the standardized scale: 1) for continuous phenotypes, the data should be standardized w.r.t. genotypic and phenotypic variance; 2) for binary phenotypes, the data should be standardized w.r.t. genotypic variance**. Causal estimates are interpreted as standard deviation (SD) unit increase in the mean (continuous outcome) or log-OR (binary outcome) of Y per SD unit increase in X (if continous). Users may use the `standardize` function to standardize their data. See Example or type `?MRMix` for more information.
+R package for two-sample This function conducts Mendelian randomization analysis using an underlying mixture model incorporating a fraction of the genetic instruments to have direct effect on the outcome (horizontal pleiotropy). MRMix takes GWAS summary statistics as inputs to estimate causal effects of one trait on another. For stability of the method, we recommend using summary statistics in the standardized scale: 1) For both binary and continuous traits, summary-statistics should be standardized by genotypic variance; 2) In addition, for continuous phenotype, summary-statistics should be standardized by phenotypic variance. If the data are not in the standardized scale, users may use the standardize function to standardize their data. See Example or type `?MRMix` for more information.
 
 ### System requirements
 

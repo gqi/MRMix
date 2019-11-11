@@ -1,14 +1,14 @@
 #' Standardize summary statistics for MRMix analysis
 #'
-#' @description This function standardizes GWAS summary statistics 1) w.r.t. genotypic and phenotypic variance for continuous phenotypes and 2) w.r.t genotypic variance for binary phenotypes. This function assumes that the summary statistics are estimates from linear or logistic regression. Do not use for other models.
+#' @description 1) For both binary and continuous traits, this function standardizes GWAS summary statistics by genotypic variance; 2) In addition, for continuous phenotype, this function standardizes summary statistics by phenotypic variance. This function is designed for GWAS estimates from linear or logistic regression. Do not use for other models.
 #'
-#' @param betahat_x GWAS effect estimates of the exposure. Vector of length \code{K}, where \code{K} is the number of instruments.
+#' @param betahat_x GWAS effect estimates of the exposure. Vector of length \code{K}, where \code{K} is the number of instruments (SNPs).
 #' @param betahat_y GWAS effect estimates of the outcome. Vector of length \code{K}.
 #' @param sx Standard error of \code{betahat_x}. Vector of length \code{K}.
 #' @param sy Standard error of \code{betahat_y}. Vector of length \code{K}.
-#' @param contbin_x Is the exposure a continuous or binary trait? Set to \code{contbin_x="continuous"} or \code{contbin_x="binary"}. Or set to \code{contbin_x="n"} if standardization is not needed.
-#' @param contbin_y Is the outcome a continuous or binary trait? Set to \code{contbin_y="continuous"} or \code{contbin_y="binary"}. Or set to \code{contbin_y="n"} if standardization is not needed.
-#' @param nx SNP-specific sample size (recommended) or total sample size of the study associated with the exposure. Vector of length \code{K} or a single number. Set to \code{NULL} if trait is binary. Summary statistics for binary traits are standardized w.r.t. to the genotypic variance which can be calculated using MAF under Hardy-Weinberg equilibrium. Hence sample size is not needed for binary traits.
+#' @param contbin_x Is the exposure a continuous or binary trait? Set to \code{contbin_x="continuous"} or \code{contbin_x="binary"}. Or set to \code{contbin_x="n"} if exposure summary statistics do not need to be standardized.
+#' @param contbin_y Is the outcome a continuous or binary trait? Set to \code{contbin_y="continuous"} or \code{contbin_y="binary"}. Or set to \code{contbin_y="n"} if outcome summary statistics do not need to be standardized.
+#' @param nx SNP-specific sample size (recommended) or total sample size of the study associated with the exposure. Vector of length \code{K} or a single number. Set to \code{NULL} if trait is binary. Summary statistics for binary traits are standardized by the genotypic variance which can be calculated using the minor allele frequency (MAF) under Hardy-Weinberg equilibrium. Hence sample size is not needed for binary traits.
 #' @param ny SNP-specific sample size (recommended) or total sample size of the study associated with the outcome. Vector of length \code{K} or a single number. Set to \code{NULL} if trait is binary for the same reason as for \code{nx}.
 #' @param MAF Minor allele frequency. Vector of length \code{K}. Set to \code{NULL} if both traits are continuous. Summary statistics for continuous traits are standardized as z statistics rescaled by sample size, hence MAF is not needed.
 #'
@@ -21,14 +21,15 @@
 #' \item{sy_std}{Standard error of \code{betahat_y_std}.}
 #'
 #' @references
-#' Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.
+#' 1. Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.
+#' 2. Qi, Guanghao, and Nilanjan Chatterjee. "A Comprehensive Evaluation of Methods for Mendelian Randomization Using Realistic Simulations of Genome-wide Association Studies." bioRxiv (2019): 702787.
 #' @export
 standardize = function(betahat_x, betahat_y, sx, sy, contbin_x, contbin_y, nx, ny, MAF){
     if (length(betahat_x)!=length(betahat_y)) stop("betahat_x and betahat_y should have the same length.")
     if (length(sx)!=length(betahat_x) & length(sx)!=1) stop("sx should have the same length as betahat_x or be a single number.")
     if (length(sy)!=length(betahat_y) & length(sy)!=1) stop("sy should have the same length as betahat_y or be a single number.")
     if (length(nx)!=length(betahat_x) & length(nx)!=1 & !is.null(nx)) stop("nx should have the same length as betahat_x or be a single number.")
-    if (length(ny)!=length(betahat_y) & length(ny)!=1 & !is.null(nx)) stop("ny should have the same length as betahat_y or be a single number.")
+    if (length(ny)!=length(betahat_y) & length(ny)!=1 & !is.null(ny)) stop("ny should have the same length as betahat_y or be a single number.")
     if (length(MAF)!=length(betahat_y) & !is.null(MAF)) stop("MAF should have the same length as betahat_y or be NULL.")
 
 
