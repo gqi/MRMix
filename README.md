@@ -44,7 +44,7 @@ Since the exposure (BMI) is continuous, the summary statistics are standardized 
 ```
 data_std = with(data, standardize(beta.x,beta.y,se.x,se.y,contbin_x = "continuous", contbin_y = "binary", nx = nx, ny = NULL, MAF = MAF))
 ```
-`standardize()` can be used if the summary statistics are estimates from linear or logistic regression. For other types of phenotypes or other analytic methods, the users need to standardize the data independently. **If your data have been standardize, skip this step and proceed to Step 5.**
+`standardize()` can be used if the summary statistics are estimates from linear or logistic regression. For other types of phenotypes or other analytic methods, the users need to standardize the data independently. **If your data have been standardized, skip this step and proceed to Step 5.**
 
 ##### Step 5. MRMix analysis
 ```
