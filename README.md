@@ -20,6 +20,7 @@ devtools::install_github("gqi/MRMix")
 ##### Step 1. Load package and data
 ```
 library(MRMix)
+library(dplyr)
 data("BMI15_MDD18", package = "MRMix")
 ```
 ##### Step 2. Merge data
