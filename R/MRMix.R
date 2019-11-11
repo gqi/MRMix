@@ -23,6 +23,7 @@
 #' \item{profile_mat}{A matrix of 3 columns containing details of the grid search. The first column is \code{theta_temp_vec}. The second and third columns are the corresponding \code{pi0} and \code{sigma2} values. Only returned if \code{profile=TRUE}.}
 #' @references
 #' 1. Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.
+#'
 #' 2. Qi, Guanghao, and Nilanjan Chatterjee. "A Comprehensive Evaluation of Methods for Mendelian Randomization Using Realistic Simulations of Genome-wide Association Studies." bioRxiv (2019): 702787.
 #' @export
 #' @examples
