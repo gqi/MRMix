@@ -22,6 +22,7 @@
 #'
 #' @references
 #' 1. Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.
+#'
 #' 2. Qi, Guanghao, and Nilanjan Chatterjee. "A Comprehensive Evaluation of Methods for Mendelian Randomization Using Realistic Simulations of Genome-wide Association Studies." bioRxiv (2019): 702787.
 #' @export
 standardize = function(betahat_x, betahat_y, sx, sy, contbin_x, contbin_y, nx, ny, MAF){
