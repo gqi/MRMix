@@ -11,40 +11,60 @@ MRMix can be used on any operating system. R needs to be installed. Package `dev
 devtools::install_github("gqi/MRMix")
 ```
 
-### Example
+### Example: body mass index (BMI) and major depressive disorder (MDD)
 
-If the summary statistics have been standardized by the user:
+##### Data source
+* Exposure: 97 SNPs from GIANT Consortium 2015 GWAS on BMI ([Locke et al, 2015](https://www.nature.com/articles/nature14177)).
+* Outcome: Psychiatric Genomics Consortium 2018 GWAS on MDD ([Wray et al, 2018](https://www.nature.com/articles/s41588-018-0090-3)). To reduce file size, we only included the SNPs that appear in the exposure dataset.
+
+##### Step 1. Load package and data
 ```
 library(MRMix)
-data("sumstats_std", package = "MRMix") # sumstats_std has been standardized
-
-est = MRMix(sumstats_std$betahat_x_std, sumstats_std$betahat_y_std, sumstats_std$sx_std, sumstats_std$sy_std)
-str(est)
+data("BMI15_MDD18", package = "MRMix")
+```
+##### Step 2. Merge data
+Merge datasets for the exposure and the outcome, compute `beta.y` from odds ratio (`OR`), compute minor allele frequency (`MAF`) from effect allele frequency (`EAF`). Keep the following variables: SNP ID (`SNP`), chromosome (`chr`), base pair (`bp`), alleles (`EA.x, NEA.x, EA,y, NEA.y`), sample size of the study associated with X (`nx`), estimate of genetic effect (`beta.x, beta.y`) and standard errors (`se.x, se.y`), MAF (`MAF`).
+```
+data = BMI15 %>% inner_join(MDD18,by="SNP") %>%
+    mutate(beta.y = log(OR), MAF = pmin(EAF,1-EAF)) %>%
+    select(SNP, chr = Chr, bp, EA.x = effect_allele, NEA.x = other_allele, 
+    nx = N, beta.x = beta, se.x = se,
+    EA.y = A1, NEA.y = A2, beta.y, se.y = SE, MAF)
 ```
 
-If the summary statistics have not been standardized:
+##### Step 3. Harmonize data
+Remove the SNPs of which the alleles do not match between the exposure and outcome datasets. Flip the sign of `beta.y` if the effect allele in the study associated with X is the non-effect allele in the study associated with Y.
 ```
-library(MRMix)
-data("sumstats", package = "MRMix")
-# Convert summary statistics to standardized scale
-data_std = standardize(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx, sumstats$sy, contbin_x = "continuous", contbin_y = "continuous", sumstats$nx, sumstats$ny, MAF = NULL)
-# MRMix analysis
-est = MRMix(data_std$betahat_x_std, data_std$betahat_y_std, data_std$sx_std, data_std$sy_std)
-str(est) # True causal effect is 0.2.
-# Include profile matrix
-est = MRMix(data_std$betahat_x_std, data_std$betahat_y_std, data_std$sx_std, data_std$sy_std, profile = TRUE)
-str(est)
+data = data %>% filter((EA.x==EA.y&NEA.x==NEA.y) | (EA.x==NEA.y&NEA.x==EA.y)) %>%
+    mutate(beta.y = ifelse(EA.x==EA.y,beta.y,-beta.y))
 ```
 
-`standardize()` can be used if the summary statistics are estimates from linear or logistic regression. For other types of phenotypes or other analytic methods, the users need to standardize the data independently before using `MRMix`. Type `?MRMix` in `R` for more details. The software has been tested on MAC OS 10.11.5 with 2.8 GHz Intel Core i7 and R version 3.5.1. Installation and the Example complete within seconds on this platform.
+##### Step 4. Standardize data
+Since the exposure (BMI) is continuous, the summary statistics are standardized as z-statistics rescaled by the sample size. Since the outcome (MDD) is binary, the summary statistics are standardized by genotypic variance calculated as `2*MAF*(1-MAF)` under Hardy-Weinberg equilibrium.
+```
+data_std = with(data, standardize(beta.x,beta.y,se.x,se.y,contbin_x = "continuous", contbin_y = "binary", nx = nx, ny = NULL, MAF = MAF))
+```
+`standardize()` can be used if the summary statistics are estimates from linear or logistic regression. For other types of phenotypes or other analytic methods, the users need to standardize the data independently. **If your data have been standardize, skip this step and proceed to Step 5.**
 
-
+##### Step 5. MRMix analysis
+```
+res = MRMix(data_std$betahat_x_std, data_std$betahat_y_std, data_std$sx_std, data_std$sy_std)
+str(res)
+```
+The results show that higher BMI increases the risk of MDD.
 
 ### More information 
 Authors: Guanghao Qi (gqi1@jhu.edu) and Nilanjan Chatterjee (nchatte2@jhu.edu)
 
-Reference: Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.
+References: 
 
-Scripts for simulations in this paper (scenarios A, B and C) are available [here](https://github.com/gqi/MRMix/tree/master/simulations). 
+1. Qi, Guanghao, and Nilanjan Chatterjee. "Mendelian randomization analysis using mixture models for robust and efficient estimation of causal effects." Nature Communications 10.1 (2019): 1941.
+2. Qi, Guanghao, and Nilanjan Chatterjee. "A Comprehensive Evaluation of Methods for Mendelian Randomization Using Realistic Simulations of Genome-wide Association Studies." bioRxiv (2019): 702787.
 
-Scripts for data analysis in this paper are available [here](https://github.com/gqi/MRMix/tree/master/data_analysis). A brief introduction is available [here](https://github.com/gqi/MRMix/wiki).
+Scripts for simulations in Reference 1 (scenarios A, B and C) are available [here](https://github.com/gqi/MRMix/tree/master/simulations). 
+
+Scripts for data analysis in Reference 1 are available [here](https://github.com/gqi/MRMix/tree/master/data_analysis). A brief introduction is available [here](https://github.com/gqi/MRMix/wiki).
+
+Scripts for simulation studies in Reference 2 are available [here](https://github.com/gqi/MR_comparison_simulations).
+
+The software has been tested on MAC OS 10.11.5 with 2.8 GHz Intel Core i7 and R version 3.5.1.
