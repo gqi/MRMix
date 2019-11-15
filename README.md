@@ -17,42 +17,78 @@ devtools::install_github("gqi/MRMix")
 * Exposure: 97 SNPs from GIANT Consortium 2015 GWAS on BMI ([Locke et al, 2015](https://www.nature.com/articles/nature14177)).
 * Outcome: Psychiatric Genomics Consortium 2018 GWAS on MDD ([Wray et al, 2018](https://www.nature.com/articles/s41588-018-0090-3)). To reduce file size, we only included the SNPs that appear in the exposure dataset.
 
-##### Step 1. Load package and data
+#### Step 1. Load package and data
 ```
 library(MRMix)
 library(dplyr)
 data("BMI15_MDD18", package = "MRMix")
 ```
-##### Step 2. Merge data
-Merge datasets for the exposure and the outcome, compute `beta.y` from odds ratio (`OR`), compute minor allele frequency (`MAF`) from effect allele frequency (`EAF`). Keep the following variables: SNP ID (`SNP`), chromosome (`chr`), base pair (`bp`), alleles (`EA.x, NEA.x, EA,y, NEA.y`), sample size of the study associated with X (`nx`), estimate of genetic effect (`beta.x, beta.y`) and standard errors (`se.x, se.y`), MAF (`MAF`).
+#### Step 2. Merge data
+Merge datasets for the exposure and the outcome, compute `beta.y` from odds ratio (`OR`). Keep the following variables: SNP ID (`SNP`), chromosome (`chr`), base pair (`bp`), effect and non-effect alleles (`EA.x, NEA.x, EA,y, NEA.y`), sample size of the study associated with X (`nx`), estimate of genetic effect (`beta.x, beta.y`) and standard errors (`se.x, se.y`), effect allele frequency (`EAF.x`, `EAF.y`). Remove the SNPs of which the alleles do not match between the exposure and outcome datasets. 
 ```
 data = BMI15 %>% inner_join(MDD18,by="SNP") %>%
-    mutate(beta.y = log(OR), MAF = pmin(EAF,1-EAF)) %>%
-    select(SNP, chr = Chr, bp, EA.x = effect_allele, NEA.x = other_allele, 
-    nx = N, beta.x = beta, se.x = se,
-    EA.y = A1, NEA.y = A2, beta.y, se.y = SE, MAF)
+    mutate(beta.y = log(OR)) %>%
+    select(SNP, chr = Chr, bp, EA.x = effect_allele, NEA.x = other_allele,
+           nx = N, beta.x = beta, se.x = se, EAF.x = EAF,
+           EA.y = A1, NEA.y = A2, beta.y, se.y = SE, EAF.y = FRQ_U_113154) 
+# Check if the alleles are the same for X and Y
+data %>% filter(!((EA.x==EA.y&NEA.x==NEA.y) | (EA.x==NEA.y&NEA.x==EA.y))) %>% nrow()
+# 0 - Alleles are the same.
 ```
 
-##### Step 3. Harmonize data
-Remove the SNPs of which the alleles do not match between the exposure and outcome datasets. Flip the sign of `beta.y` if the effect allele in the study associated with X is the non-effect allele in the study associated with Y.
+#### Step 3. Harmonize data
+Check the allele frequency of palindromic SNPs. Results show that the are coded with respect to the same strand.
 ```
-data = data %>% filter((EA.x==EA.y&NEA.x==NEA.y) | (EA.x==NEA.y&NEA.x==EA.y)) %>%
-    mutate(beta.y = ifelse(EA.x==EA.y,beta.y,-beta.y))
+data %>% filter((EA.x=="A"&NEA.x=="T") | (EA.x=="T"&NEA.x=="A") | (EA.x=="G"&NEA.x=="C") | (EA.x=="C"&NEA.x=="G")) %>%
+    select(SNP, EA.x, NEA.x, EAF.x, EA.y, NEA.y, EAF.y)
+    
+#          SNP EA.x NEA.x EAF.x EA.y NEA.y EAF.y
+# 1  rs1558902    A     T 0.415    A     T 0.410
+# 2  rs4256980    G     C 0.646    C     G 0.349
+# 3  rs9641123    C     G 0.429    C     G 0.410
+# 4 rs17001654    G     C 0.153    C     G 0.841
+# 5  rs9914578    G     C 0.211    C     G 0.795
 ```
 
-##### Step 4. Standardize data
+Flip the sign of `beta.y` if the effect allele in the study associated with X is the non-effect allele in the study associated with Y.
+```
+data = data %>% mutate(beta.y = ifelse(EA.x==EA.y,beta.y,-beta.y), MAF = pmin(EAF.x,1-EAF.x))
+```
+
+#### Step 4. Standardize data
 Since the exposure (BMI) is continuous, the summary statistics are standardized as z-statistics rescaled by the sample size. Since the outcome (MDD) is binary, the summary statistics are standardized by genotypic variance calculated as `2*MAF*(1-MAF)` under Hardy-Weinberg equilibrium.
 ```
-data_std = with(data, standardize(beta.x,beta.y,se.x,se.y,contbin_x = "continuous", contbin_y = "binary", nx = nx, ny = NULL, MAF = MAF))
+data_std = with(data, standardize(beta.x,beta.y,se.x,se.y,xtype = "continuous", ytype = "binary", nx = nx, ny = NULL, MAF = MAF))
 ```
 `standardize()` can be used if the summary statistics are estimates from linear or logistic regression. For other types of phenotypes or other analytic methods, the users need to standardize the data independently. **If your data have been standardized, skip this step and proceed to Step 5.**
 
-##### Step 5. MRMix analysis
+#### Step 5. MRMix analysis
 ```
-res = MRMix(data_std$betahat_x_std, data_std$betahat_y_std, data_std$sx_std, data_std$sy_std)
+res = MRMix(data_std$betahat_x_std, data_std$betahat_y_std, data_std$sx_std, data_std$sy_std, profile = TRUE)
 str(res)
+
+# List of 7
+# $ theta       : num 0.33
+# $ pi0         : num 0.462
+# $ sigma2      : num 0.000109
+# $ SE_theta    : num 0.133
+# $ zstat_theta : num 2.48
+# $ pvalue_theta: num 0.013
+# $ profile_mat : num [1:201, 1:3] -1 -0.99 -0.98 -0.97 -0.96 -0.95 -0.94 -0.93 -0.92 -0.91 ...
+# ..- attr(*, "dimnames")=List of 2
+# .. ..$ : NULL
+# .. ..$ : chr [1:3] "theta" "pi0" "sigma2"
 ```
 The results show that higher BMI increases the risk of MDD.
+
+#### Step 6. Profile plot
+Plot `pi0` against `theta`. A smooth curve with a clear maximum indicates stable performance.
+```
+plot(res$profile_mat[,"theta"], res$profile_mat[,"pi0"], xlab = "theta", ylab = "pi0", type = "l")
+abline(v = res$theta, lty = 2, col = "red")
+```
+
+
 
 ### More information 
 Authors: Guanghao Qi (gqi1@jhu.edu) and Nilanjan Chatterjee (nchatte2@jhu.edu)

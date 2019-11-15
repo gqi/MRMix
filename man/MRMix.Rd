@@ -26,7 +26,7 @@ MRMix(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-1, 1, by =
 }
 \value{
 A list that contains
-\item{theta}{Estimate of causal effect. Assuming the summary statistics are standardized, \code{theta} represents increase in mean value of Y in s.d. unit of Y (for continuous outcomes) or log-OR of Y (for binary outcomes) associated with per s.d. unit increase in values of X (for continuous exposures) or X changing from 0 to 1 (for binary exposures).}
+\item{theta}{Estimate of causal effect. Assuming the summary statistics are standardized, \code{theta} represents increase in mean value of Y in s.d. unit of Y (for continuous outcomes) or log-OR of Y (for binary outcomes) associated with per s.d. unit increase in values of X (for continuous exposures) or values of X changing from 0 to 1 (for binary exposures).}
 \item{pi0}{The probability mass of the null component corresponding to the estimated \code{theta}.}
 \item{sigma2}{The variance of the non-null component corresponding to the estimated \code{theta}.}
 \item{SE_theta}{Standard error of causal effect estimate.}
@@ -43,7 +43,7 @@ The algorithm searches over a grid of possible values of the causal effect \code
 \examples{
 data("sumstats", package = "MRMix")
 # Convert summary statistics to standardized scale
-data_std = standardize(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx, sumstats$sy, contbin_x = "continuous", contbin_y = "continuous", sumstats$nx, sumstats$ny, MAF = NULL)
+data_std = standardize(sumstats$betahat_x, sumstats$betahat_y, sumstats$sx, sumstats$sy, xtype = "continuous", ytype = "continuous", sumstats$nx, sumstats$ny, MAF = NULL)
 # MRMix analysis
 est = MRMix(data_std$betahat_x_std, data_std$betahat_y_std, data_std$sx_std, data_std$sy_std)
 str(est) # True causal effect is 0.2.
