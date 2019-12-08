@@ -21,7 +21,8 @@ devtools::install_github("gqi/MRMix")
 ```
 library(MRMix)
 library(dplyr)
-data("BMI15_MDD18", package = "MRMix")
+data("BMI15", package = "MRMix")
+data("MDD18", package = "MRMix")
 ```
 #### Step 2. Merge data
 Merge datasets for the exposure and the outcome, compute `beta.y` from odds ratio (`OR`). Keep the following variables: SNP ID (`SNP`), chromosome (`chr`), base pair (`bp`), effect and non-effect alleles (`EA.x, NEA.x, EA,y, NEA.y`), sample size of the study associated with X (`nx`), estimate of genetic effect (`beta.x, beta.y`) and standard errors (`se.x, se.y`), effect allele frequency (`EAF.x`, `EAF.y`). Remove the SNPs of which the alleles do not match between the exposure and outcome datasets. 
