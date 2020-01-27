@@ -29,10 +29,10 @@ standardize = function(betahat_x, betahat_y, sx, sy, xtype, ytype, nx, ny, MAF){
     if (length(betahat_x)!=length(betahat_y)) stop("betahat_x and betahat_y should have the same length.")
     if (length(sx)!=length(betahat_x) & length(sx)!=1) stop("sx should have the same length as betahat_x or be a single number.")
     if (length(sy)!=length(betahat_y) & length(sy)!=1) stop("sy should have the same length as betahat_y or be a single number.")
-    if (length(nx)!=length(betahat_x) & length(nx)!=1 & !is.null(nx)) stop("nx should have the same length as betahat_x or be a single number.")
-    if (length(ny)!=length(betahat_y) & length(ny)!=1 & !is.null(ny)) stop("ny should have the same length as betahat_y or be a single number.")
-    if (length(MAF)!=length(betahat_y) & !is.null(MAF)) stop("MAF should have the same length as betahat_y or be NULL.")
-
+    if (!is.null(nx) & length(nx)!=length(betahat_x) & length(nx)!=1) stop("nx should have the same length as betahat_x or be a single number.")
+    if (!is.null(ny) & length(ny)!=length(betahat_y) & length(ny)!=1) stop("ny should have the same length as betahat_y or be a single number.")
+    if (!is.null(MAF) & length(MAF)!=length(betahat_y)) stop("MAF should have the same length as betahat_y or be NULL.")
+    if (!is.null(MAF) & (sum(MAF<=0|MAF>=1)>0)) stop("MAF should be between 0 and 1.")
 
     if (xtype=="continuous"){
         betahat_x_std = betahat_x/sx/sqrt(nx)

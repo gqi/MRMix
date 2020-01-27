@@ -57,6 +57,8 @@ MRMix = function(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-1,1,by=0.01
         pi0_ck = pi0
         sigma0_ck = sigma0
         iter_ck = 0
+
+        s0_med = median(sy)^2+theta_temp^2*median(sx)^2
         # Fit mixture models via EM algorithm
         for (iter in 1:50000){
             f1 = 1/sqrt(2*pi*sigma0)*exp(-0.5/sigma0*(betahat_y-theta_temp*betahat_x)^2)
@@ -70,7 +72,7 @@ MRMix = function(betahat_x, betahat_y, sx, sy, theta_temp_vec = seq(-1,1,by=0.01
             if (pi0<0.0001) pi0 = 0.0001
             if (pi0>0.9999) pi0 = 0.9999
             if (sigma0>0.01) sigma0=0.01
-            if (sigma0<1e-7) sigma0=1e-7
+            if (sigma0<1.1*s0_med) sigma0 = 1.1*s0_med
 
             if (iter%%1000==0){
                 if ((abs(pi0-pi0_ck)/pi0<1e-4) & (abs(sigma0-sigma0_ck)/sigma0<1e-4)){
